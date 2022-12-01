@@ -8,10 +8,10 @@ import com.yondu.university.project_rohan.config.RsaKeyProperties;
 
 @SpringBootApplication
 @EnableConfigurationProperties(RsaKeyProperties.class)
-public class RohanApplication {
+public class ProjectRohanApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(RohanApplication.class, args);
+		SpringApplication.run(ProjectRohanApplication.class, args);
 	}
 
 }
