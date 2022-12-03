@@ -1,9 +1,8 @@
-package com.yondu.university.project_rohan.model;
+package com.yondu.university.project_rohan.entity;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.HashSet;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,9 +14,11 @@ public class AuthenticatedUser implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toSet());
+    public Collection<SimpleGrantedAuthority> getAuthorities() {
+        Collection<SimpleGrantedAuthority> authorities = new HashSet<>();
+        this.user.getRoles()
+                .forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName().replace(' ', '_'))));
+        return authorities;
     }
 
     @Override

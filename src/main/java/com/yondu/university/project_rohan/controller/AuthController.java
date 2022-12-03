@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.yondu.university.project_rohan.model.LoginRequest;
+import com.yondu.university.project_rohan.dto.LoginRequest;
 import com.yondu.university.project_rohan.service.TokenService;
+
+import jakarta.validation.Valid;
 
 @RestController
 public class AuthController {
@@ -22,9 +24,9 @@ public class AuthController {
     }
 
     @PostMapping("oauth2/token")
-    public String token(@RequestBody LoginRequest loginRequest) {
+    public String token(@RequestBody @Valid LoginRequest loginRequest) {
         Authentication authentication = this.authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password()));
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         String token = tokenService.generateToken(authentication);
         return token;
     }
