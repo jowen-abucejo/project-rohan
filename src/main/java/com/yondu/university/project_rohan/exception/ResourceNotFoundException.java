@@ -1,11 +1,11 @@
 package com.yondu.university.project_rohan.exception;
 
-public class UniqueConstraintException extends RuntimeException {
+public class ResourceNotFoundException extends RuntimeException {
 
     /**
      * @param message
      */
-    public UniqueConstraintException(String message) {
+    public ResourceNotFoundException(String message) {
         super(message);
     }
 
@@ -13,7 +13,8 @@ public class UniqueConstraintException extends RuntimeException {
      * @param message
      * @param cause
      */
-    public UniqueConstraintException(String message, Throwable cause) {
+    public ResourceNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
+
 }

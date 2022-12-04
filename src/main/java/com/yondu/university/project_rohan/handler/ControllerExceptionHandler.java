@@ -14,7 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.yondu.university.project_rohan.exception.UniqueConstraintException;
+import com.yondu.university.project_rohan.exception.ResourceNotFoundException;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
@@ -25,12 +25,11 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(UniqueConstraintException.class)
-    public ResponseEntity<Map<String, List<String>>> handleUniqueConstraintException(
-            UniqueConstraintException ex) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, List<String>>> handleResourceNotFoundException(ResourceNotFoundException ex) {
         List<String> errors = new ArrayList<>();
         errors.add(ex.getMessage());
-        return new ResponseEntity<>(getErrorsMap(errors), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
     private Map<String, List<String>> getErrorsMap(List<String> errors) {

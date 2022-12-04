@@ -11,7 +11,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.yondu.university.project_rohan.validation.UniqueEmail;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -36,7 +36,8 @@ public class User {
 
     @Column(unique = true, nullable = false, length = 128)
     @NotBlank(message = "Email is required.")
-    @Length(max = 128, message = "Email maximum length is 128 characters only.")
+    @Length(max = 128, message = "Email maximum length is 128 characters only (case-insensitive).")
+    @UniqueEmail
     private String email;
 
     @Column(nullable = false)
@@ -127,7 +128,6 @@ public class User {
     /**
      * @return the password
      */
-    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -156,7 +156,6 @@ public class User {
     /**
      * @return the createdBy
      */
-    @JsonIgnore
     public String getCreatedBy() {
         return createdBy;
     }
@@ -164,7 +163,6 @@ public class User {
     /**
      * @return the createdAt
      */
-    @JsonIgnore
     public LocalDateTime getCreated_at() {
         return createdAt;
     }
@@ -172,7 +170,6 @@ public class User {
     /**
      * @return the updatedBy
      */
-    @JsonIgnore
     public String getUpdatedBy() {
         return updatedBy;
     }
@@ -180,7 +177,6 @@ public class User {
     /**
      * @return the updatedAt
      */
-    @JsonIgnore
     public LocalDateTime getUpdated_at() {
         return updatedAt;
     }

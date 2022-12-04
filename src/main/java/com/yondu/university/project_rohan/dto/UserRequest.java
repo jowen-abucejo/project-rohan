@@ -2,11 +2,17 @@ package com.yondu.university.project_rohan.dto;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.yondu.university.project_rohan.validation.UniqueEmail;
+
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 public class UserRequest {
     @NotBlank(message = "Email is required.")
+    @Email(message = "Email is in invalid format")
     @Length(max = 128, message = "Email maximum length is 128 characters only.")
+    @UniqueEmail
     private String email;
 
     @NotBlank(message = "First name is required.")
@@ -18,7 +24,7 @@ public class UserRequest {
     private String lastName;
 
     @NotBlank(message = "Role is required.")
-    @Length(max = 128, message = "Role maximum length is 64 characters only.")
+    @Pattern(regexp = "^(STUDENT|student|SUBJECT MATTER EXPERT|subject matter expert)$", message = "Role can either be 'STUDENT' or 'SUBJECT MATTER EXPERT' only (case-insensitive).")
     private String role;
 
     private boolean isActive;
@@ -41,6 +47,21 @@ public class UserRequest {
         this.lastName = lastName;
         this.role = role;
         this.isActive = true;
+    }
+
+    /**
+     * @param email
+     * @param firstName
+     * @param lastName
+     * @param role
+     * @param isActive
+     */
+    public UserRequest(String email, String firstName, String lastName, String role, boolean isActive) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = role;
+        this.isActive = isActive;
     }
 
     /**
