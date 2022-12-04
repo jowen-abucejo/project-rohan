@@ -1,16 +1,17 @@
-package com.yondu.university.project_rohan.model;
+package com.yondu.university.project_rohan.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -18,33 +19,41 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(length = 11)
+    private Integer id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 128)
+    @NotBlank(message = "Email is required.")
+    @Length(max = 128, message = "Email maximum length is 128 characters only.")
     private String email;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 128)
+    @NotBlank(message = "First name is required.")
+    @Length(max = 128, message = "First name maximum length is 128 characters only.")
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 128)
+    @NotBlank(message = "Last name is required.")
+    @Length(max = 128, message = "Last name maximum length is 128 characters only.")
     private String lastName;
 
     private boolean isActive;
 
     @CreatedBy
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, length = 128)
     private String createdBy;
 
     @CreatedDate
@@ -52,20 +61,22 @@ public class User {
     private LocalDateTime createdAt;
 
     @LastModifiedBy
-    @Column(nullable = false)
+    @Column(nullable = false, length = 128)
     private String updatedBy;
 
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Role> roles = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Collection<Role> roles = new HashSet<>();
 
     /**
      * 
      */
     public User() {
+        this.isActive = true;
     }
 
     /**
@@ -81,7 +92,7 @@ public class User {
      * @param updatedAt
      * @param roles
      */
-    public User(Long id, String email, String password, String firstName, String lastName, boolean isActive,
+    public User(Integer id, String email, String password, String firstName, String lastName, boolean isActive,
             String createdBy, LocalDateTime createdAt, String updatedBy, LocalDateTime updatedAt,
             HashSet<Role> roles) {
         this.id = id;
@@ -98,94 +109,131 @@ public class User {
     }
 
     /**
-     * @param email
-     * @param firstName
-     * @param middleName
-     * @param lastName
-     * @param role
-     */
-    public User(String email, String firstName, String lastName) {
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.isActive = true;
-    }
-
-    /**
      * @return the id
      */
-    public Long getId() {
-        return id;
+    public Integer getId() {
+        return this.id;
     }
 
     /**
      * @return the email
      */
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
     /**
      * @return the password
      */
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     /**
      * @return the firstName
      */
     public String getFirstName() {
-        return firstName;
+        return this.firstName;
     }
 
     /**
      * @return the lastName
      */
     public String getLastName() {
-        return lastName;
+        return this.lastName;
     }
 
     /**
      * @return the isActive
      */
     public boolean isActive() {
-        return isActive;
+        return this.isActive;
     }
 
     /**
      * @return the createdBy
      */
     public String getCreatedBy() {
-        return createdBy;
+        return this.createdBy;
     }
 
     /**
      * @return the createdAt
      */
     public LocalDateTime getCreated_at() {
-        return createdAt;
+        return this.createdAt;
     }
 
     /**
      * @return the updatedBy
      */
     public String getUpdatedBy() {
-        return updatedBy;
+        return this.updatedBy;
     }
 
     /**
      * @return the updatedAt
      */
     public LocalDateTime getUpdated_at() {
-        return updatedAt;
+        return this.updatedAt;
     }
 
     /**
      * @return the roles
      */
     public Collection<Role> getRoles() {
-        return roles;
+        return this.roles;
+    }
+
+    /**
+     * 
+     * @param id the id to set
+     */
+    public void setId(Integer id) {
+        if (this.id == null || this.id == 0)
+            this.id = id;
+    }
+
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @param firstName the firstName to set
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     * @param lastName the lastName to set
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    /**
+     * @param isActive the isActive to set
+     */
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    /**
+     * @param roles the roles to set
+     */
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
 
 }
