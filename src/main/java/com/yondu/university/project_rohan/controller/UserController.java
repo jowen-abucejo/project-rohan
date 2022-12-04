@@ -52,7 +52,7 @@ public class UserController {
             @RequestParam(defaultValue = "10") int size) {
         Pageable paging = PageRequest.of(page, size, Sort.by("email"));
 
-        return this.userService.findAllExceptCurrentUser(currentUser, role, paging)
+        return this.userService.findAllExceptCurrentUser(currentUser, role.trim(), paging)
                 .map(user -> convertToUserRequest(user));
     }
 
@@ -65,19 +65,18 @@ public class UserController {
     @GetMapping(path = "{email}")
     @PreAuthorize("hasRole('ADMIN')")
     public UserRequest getUser(@PathVariable String email) {
-        Optional<User> optionalUser = this.userService.findByEmail(email);
+        Optional<User> optionalUser = this.userService.findByEmail(email.trim());
         if (optionalUser.isEmpty()) {
             throw new ResourceNotFoundException("User not found.");
         }
 
-        UserRequest userRequest = convertToUserRequest(optionalUser.get());
-        return userRequest;
+        return convertToUserRequest(optionalUser.get());
     }
 
     @PatchMapping(path = "{email}")
     @PreAuthorize("hasRole('ADMIN')")
     public UserRequest deactivateUser(@PathVariable String email) {
-        Optional<User> optionalUser = this.userService.deactivateUser(email);
+        Optional<User> optionalUser = this.userService.deactivateUser(email.trim());
         if (optionalUser.isEmpty()) {
             throw new ResourceNotFoundException("User not found.");
         }
@@ -89,13 +88,12 @@ public class UserController {
     @GetMapping(path = "search")
     @PreAuthorize("hasRole('ADMIN')")
     public UserRequest searchUser(@RequestParam String searchKey) {
-        Optional<User> optionalUser = this.userService.searchUser(searchKey);
+        Optional<User> optionalUser = this.userService.searchUser(searchKey.trim());
         if (optionalUser.isEmpty()) {
             throw new ResourceNotFoundException("User not found.");
         }
 
-        UserRequest userRequest = convertToUserRequest(optionalUser.get());
-        return userRequest;
+        return convertToUserRequest(optionalUser.get());
     }
 
     private UserRequest convertToUserRequest(User user) {
@@ -117,11 +115,11 @@ public class UserController {
                 .trim().replaceAll("\s+", " ").toUpperCase().split(",");
 
         for (String role : userRequestRoles) {
-            if (role == null || role.isEmpty())
+            if (role == null || role.isBlank())
                 continue;
 
-            Role userRole = this.roleService.findByName(role)
-                    .orElse(new Role(null, role));
+            Role userRole = this.roleService.findByName(role.trim())
+                    .orElse(new Role(null, role.trim().toUpperCase()));
             roles.add(userRole);
         }
 

@@ -33,6 +33,7 @@ public class UserRequest {
      * 
      */
     public UserRequest() {
+        this.isActive = true;
     }
 
     /**
@@ -68,7 +69,7 @@ public class UserRequest {
      * @return the email
      */
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
     /**
@@ -82,7 +83,7 @@ public class UserRequest {
      * @return the firstName
      */
     public String getFirstName() {
-        return firstName;
+        return this.firstName;
     }
 
     /**
@@ -96,7 +97,7 @@ public class UserRequest {
      * @return the lastName
      */
     public String getLastName() {
-        return lastName;
+        return this.lastName;
     }
 
     /**
@@ -110,7 +111,7 @@ public class UserRequest {
      * @return the role
      */
     public String getRole() {
-        return role;
+        return this.role;
     }
 
     /**
@@ -124,7 +125,7 @@ public class UserRequest {
      * @return the isActive
      */
     public boolean isActive() {
-        return isActive;
+        return this.isActive;
     }
 
     /**

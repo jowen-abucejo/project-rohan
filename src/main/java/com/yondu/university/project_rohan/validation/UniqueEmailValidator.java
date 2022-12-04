@@ -18,7 +18,7 @@ public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, St
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
-        return !this.userService.existsEmail(email);
+        return !this.userService.isEmailExists(email);
     }
 
 }

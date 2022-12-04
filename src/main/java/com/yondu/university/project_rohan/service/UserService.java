@@ -11,6 +11,8 @@ import com.yondu.university.project_rohan.entity.User;
 import com.yondu.university.project_rohan.repository.UserRepository;
 import com.yondu.university.project_rohan.util.PasswordGenerator;
 
+import jakarta.validation.Valid;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -24,7 +26,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public String saveNewUser(User user) {
+    public String saveNewUser(@Valid User user) {
         String tempPassword = PasswordGenerator.generateRandomPassword(9);
         user.setPassword(this.passwordEncoder.encode(tempPassword));
         this.userRepository.save(user);
@@ -34,10 +36,10 @@ public class UserService {
     public Page<User> findAllExceptCurrentUser(String currentUserEmail, String role, Pageable pageable) {
         if (role == null || role.trim().isEmpty())
             return this.userRepository.findByEmailIsNot(currentUserEmail, pageable);
-        return this.userRepository.findWithRoleAndEmailIsNot(currentUserEmail, role.trim(), pageable);
+        return this.userRepository.findByRoleAndEmailIsNot(currentUserEmail, role.trim(), pageable);
     }
 
-    public Boolean existsEmail(String email) {
+    public Boolean isEmailExists(String email) {
         return this.userRepository.existsByEmail(email);
     }
 

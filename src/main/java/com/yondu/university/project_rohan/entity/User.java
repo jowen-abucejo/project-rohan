@@ -11,8 +11,6 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.yondu.university.project_rohan.validation.UniqueEmail;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,8 +34,7 @@ public class User {
 
     @Column(unique = true, nullable = false, length = 128)
     @NotBlank(message = "Email is required.")
-    @Length(max = 128, message = "Email maximum length is 128 characters only (case-insensitive).")
-    @UniqueEmail
+    @Length(max = 128, message = "Email maximum length is 128 characters only.")
     private String email;
 
     @Column(nullable = false)
@@ -115,77 +112,77 @@ public class User {
      * @return the id
      */
     public Integer getId() {
-        return id;
+        return this.id;
     }
 
     /**
      * @return the email
      */
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
     /**
      * @return the password
      */
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     /**
      * @return the firstName
      */
     public String getFirstName() {
-        return firstName;
+        return this.firstName;
     }
 
     /**
      * @return the lastName
      */
     public String getLastName() {
-        return lastName;
+        return this.lastName;
     }
 
     /**
      * @return the isActive
      */
     public boolean isActive() {
-        return isActive;
+        return this.isActive;
     }
 
     /**
      * @return the createdBy
      */
     public String getCreatedBy() {
-        return createdBy;
+        return this.createdBy;
     }
 
     /**
      * @return the createdAt
      */
     public LocalDateTime getCreated_at() {
-        return createdAt;
+        return this.createdAt;
     }
 
     /**
      * @return the updatedBy
      */
     public String getUpdatedBy() {
-        return updatedBy;
+        return this.updatedBy;
     }
 
     /**
      * @return the updatedAt
      */
     public LocalDateTime getUpdated_at() {
-        return updatedAt;
+        return this.updatedAt;
     }
 
     /**
      * @return the roles
      */
     public Collection<Role> getRoles() {
-        return roles;
+        return this.roles;
     }
 
     /**

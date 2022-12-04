@@ -22,14 +22,14 @@ public class LoginRequest {
      * @return the username
      */
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     /**
      * @return the password
      */
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
 }
