@@ -186,15 +186,6 @@ public class User {
     }
 
     /**
-     * 
-     * @param id the id to set
-     */
-    public void setId(Integer id) {
-        if (this.id == null || this.id == 0)
-            this.id = id;
-    }
-
-    /**
      * @param email the email to set
      */
     public void setEmail(String email) {

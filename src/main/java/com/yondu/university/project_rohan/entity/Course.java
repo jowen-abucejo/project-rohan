@@ -96,24 +96,10 @@ public class Course {
     }
 
     /**
-     * @param id the id to set
-     */
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    /**
      * @return the code
      */
     public String getCode() {
         return this.code;
-    }
-
-    /**
-     * @param code the code to set
-     */
-    public void setCode(String code) {
-        this.code = code;
     }
 
     /**
@@ -124,24 +110,10 @@ public class Course {
     }
 
     /**
-     * @param title the title to set
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    /**
      * @return the description
      */
     public String getDescription() {
         return this.description;
-    }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**
@@ -152,24 +124,10 @@ public class Course {
     }
 
     /**
-     * @param isActive the isActive to set
-     */
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    /**
      * @return the createdBy
      */
     public String getCreatedBy() {
         return this.createdBy;
-    }
-
-    /**
-     * @param createdBy the createdBy to set
-     */
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
     }
 
     /**
@@ -180,24 +138,10 @@ public class Course {
     }
 
     /**
-     * @param createdAt the createdAt to set
-     */
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    /**
      * @return the updatedBy
      */
     public String getUpdatedBy() {
         return this.updatedBy;
-    }
-
-    /**
-     * @param updatedBy the updatedBy to set
-     */
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
     }
 
     /**
@@ -208,10 +152,30 @@ public class Course {
     }
 
     /**
-     * @param updatedAt the updatedAt to set
+     * @param code the code to set
      */
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setCode(String code) {
+        this.code = code;
     }
 
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * @param isActive the isActive to set
+     */
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 }

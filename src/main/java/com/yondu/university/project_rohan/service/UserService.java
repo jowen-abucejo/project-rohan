@@ -26,11 +26,11 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public String saveNewUser(@Valid User user) {
+    public User saveNewUser(@Valid User user) {
         String tempPassword = PasswordGenerator.generateRandomPassword(9);
         user.setPassword(this.passwordEncoder.encode(tempPassword));
-        this.userRepository.save(user);
-        return tempPassword;
+        return this.userRepository.save(user);
+        // return tempPassword;
     }
 
     public Page<User> findAllExceptCurrentUser(String currentUserEmail, String role, Pageable pageable) {
@@ -43,8 +43,8 @@ public class UserService {
         return this.userRepository.existsByEmail(email);
     }
 
-    public Optional<User> searchUser(String searchKey) {
-        return this.userRepository.findByEmailOrFirstNameOrLastName(searchKey);
+    public Page<User> searchUsers(String searchKey, String currentUser, Pageable pageable) {
+        return this.userRepository.findByEmailOrFirstNameOrLastName(searchKey, currentUser, pageable);
     }
 
     public Optional<User> findByEmail(String email) {

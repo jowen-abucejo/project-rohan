@@ -49,13 +49,6 @@ public class Role {
     }
 
     /**
-     * @param id the id to set
-     */
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    /**
      * @param name the name to set
      */
     public void setName(String name) {

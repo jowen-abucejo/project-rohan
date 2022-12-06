@@ -32,8 +32,8 @@ public class CourseService {
         return this.courseRepository.existsByCode(code);
     }
 
-    public Optional<Course> searchCourse(String searchKey) {
-        return this.courseRepository.findByCodeOrTitleOrDescription(searchKey);
+    public Page<Course> searchCourses(String searchKey, Pageable pageable) {
+        return this.courseRepository.findByCodeOrTitleOrDescription(searchKey, pageable);
     }
 
     public Optional<Course> findByCode(String code) {

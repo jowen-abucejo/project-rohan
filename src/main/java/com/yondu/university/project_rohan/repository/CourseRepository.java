@@ -18,6 +18,6 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 
     Boolean existsByCode(String code);
 
-    @Query(value = "SELECT * FROM course WHERE code=:search OR title=:search OR description=:search LIMIT 1", nativeQuery = true)
-    Optional<Course> findByCodeOrTitleOrDescription(String search);
+    @Query(value = "SELECT * FROM course WHERE code=:search OR title=:search OR description=:search", nativeQuery = true)
+    Page<Course> findByCodeOrTitleOrDescription(String search, Pageable pageable);
 }

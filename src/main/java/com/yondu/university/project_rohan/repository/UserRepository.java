@@ -22,9 +22,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query(value = "SELECT u.* FROM user u INNER JOIN user_role ur ON u.id=ur.user_id " +
             "INNER JOIN role r ON r.id=ur.role_id WHERE u.email!=:email AND r.name=:role ", nativeQuery = true)
-    Page<User> findByRoleAndEmailIsNot(String role, String email, Pageable page);
+    Page<User> findByRoleAndEmailIsNot(String role, String email, Pageable pageable);
 
-    @Query(value = "SELECT * FROM user WHERE email=:search OR first_name=:search OR last_name=:search LIMIT 1", nativeQuery = true)
-    Optional<User> findByEmailOrFirstNameOrLastName(String search);
+    @Query(value = "SELECT * FROM user WHERE (email=:search OR first_name=:search OR last_name=:search) AND email!=:email", nativeQuery = true)
+    Page<User> findByEmailOrFirstNameOrLastName(String search, String email, Pageable pageable);
 
 }
