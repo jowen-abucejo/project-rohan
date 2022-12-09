@@ -2,7 +2,6 @@ package com.yondu.university.project_rohan.entity;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -15,7 +14,6 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -26,17 +24,12 @@ public class Course {
     private Integer id;
 
     @Column(unique = true, nullable = false, length = 32)
-    @NotBlank(message = "Course code is required.")
-    @Length(max = 32, message = "Course code maximum length is 32 characters only.")
     private String code;
 
     @Column(nullable = false, length = 128)
-    @NotBlank(message = "Course title is required.")
-    @Length(max = 128, message = "Course title maximum length is 128 characters ony.")
     private String title;
 
     @Column(nullable = false)
-    @NotBlank(message = "Course description is required.")
     private String description;
 
     private boolean isActive;
@@ -96,24 +89,10 @@ public class Course {
     }
 
     /**
-     * @param id the id to set
-     */
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    /**
      * @return the code
      */
     public String getCode() {
         return this.code;
-    }
-
-    /**
-     * @param code the code to set
-     */
-    public void setCode(String code) {
-        this.code = code;
     }
 
     /**
@@ -124,24 +103,10 @@ public class Course {
     }
 
     /**
-     * @param title the title to set
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    /**
      * @return the description
      */
     public String getDescription() {
         return this.description;
-    }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**
@@ -152,24 +117,10 @@ public class Course {
     }
 
     /**
-     * @param isActive the isActive to set
-     */
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    /**
      * @return the createdBy
      */
     public String getCreatedBy() {
         return this.createdBy;
-    }
-
-    /**
-     * @param createdBy the createdBy to set
-     */
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
     }
 
     /**
@@ -180,24 +131,10 @@ public class Course {
     }
 
     /**
-     * @param createdAt the createdAt to set
-     */
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    /**
      * @return the updatedBy
      */
     public String getUpdatedBy() {
         return this.updatedBy;
-    }
-
-    /**
-     * @param updatedBy the updatedBy to set
-     */
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
     }
 
     /**
@@ -208,10 +145,30 @@ public class Course {
     }
 
     /**
-     * @param updatedAt the updatedAt to set
+     * @param code the code to set
      */
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setCode(String code) {
+        this.code = code;
     }
 
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * @param isActive the isActive to set
+     */
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 }

@@ -1,10 +1,9 @@
 package com.yondu.university.project_rohan.entity;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.Set;
 import java.util.HashSet;
 
-import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -22,7 +21,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -33,21 +31,15 @@ public class User {
     private Integer id;
 
     @Column(unique = true, nullable = false, length = 128)
-    @NotBlank(message = "Email is required.")
-    @Length(max = 128, message = "Email maximum length is 128 characters only.")
     private String email;
 
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, length = 128)
-    @NotBlank(message = "First name is required.")
-    @Length(max = 128, message = "First name maximum length is 128 characters only.")
     private String firstName;
 
     @Column(nullable = false, length = 128)
-    @NotBlank(message = "Last name is required.")
-    @Length(max = 128, message = "Last name maximum length is 128 characters only.")
     private String lastName;
 
     private boolean isActive;
@@ -70,7 +62,7 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Collection<Role> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
 
     /**
      * 
@@ -160,7 +152,7 @@ public class User {
     /**
      * @return the createdAt
      */
-    public LocalDateTime getCreated_at() {
+    public LocalDateTime getCreatedAt() {
         return this.createdAt;
     }
 
@@ -174,24 +166,15 @@ public class User {
     /**
      * @return the updatedAt
      */
-    public LocalDateTime getUpdated_at() {
+    public LocalDateTime getUpdatedAt() {
         return this.updatedAt;
     }
 
     /**
      * @return the roles
      */
-    public Collection<Role> getRoles() {
+    public Set<Role> getRoles() {
         return this.roles;
-    }
-
-    /**
-     * 
-     * @param id the id to set
-     */
-    public void setId(Integer id) {
-        if (this.id == null || this.id == 0)
-            this.id = id;
     }
 
     /**
@@ -232,7 +215,7 @@ public class User {
     /**
      * @param roles the roles to set
      */
-    public void setRoles(Collection<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 

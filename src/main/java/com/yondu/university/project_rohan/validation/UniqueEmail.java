@@ -8,6 +8,8 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import com.yondu.university.project_rohan.validation.validator.UniqueEmailValidator;
+
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

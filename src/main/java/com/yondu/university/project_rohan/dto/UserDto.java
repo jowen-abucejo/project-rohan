@@ -2,13 +2,16 @@ package com.yondu.university.project_rohan.dto;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.yondu.university.project_rohan.validation.UniqueEmail;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-public class UserRequest {
+public class UserDto {
     @NotBlank(message = "Email is required.")
     @Email(message = "Email is in invalid format")
     @Length(max = 128, message = "Email maximum length is 128 characters only.")
@@ -17,23 +20,29 @@ public class UserRequest {
 
     @NotBlank(message = "First name is required.")
     @Length(max = 128, message = "First name maximum length is 128 characters only.")
+    @JsonProperty(value = "first_name")
     private String firstName;
 
+    @JsonProperty(value = "last_name")
     @NotBlank(message = "Last name is required.")
     @Length(max = 128, message = "Last name maximum length is 128 characters only.")
     private String lastName;
 
     @NotBlank(message = "Role is required.")
     @Pattern(regexp = "^(STUDENT|student|SUBJECT MATTER EXPERT|subject matter expert)$", message = "Role can either be 'STUDENT' or 'SUBJECT MATTER EXPERT' only (case-insensitive).")
+    @JsonInclude(Include.NON_EMPTY)
     private String role;
 
-    private boolean isActive;
+    @JsonInclude(Include.NON_EMPTY)
+    private String password;
+
+    @JsonInclude(Include.NON_EMPTY)
+    private String status;
 
     /**
      * 
      */
-    public UserRequest() {
-        this.isActive = true;
+    public UserDto() {
     }
 
     /**
@@ -42,27 +51,11 @@ public class UserRequest {
      * @param lastName
      * @param role
      */
-    public UserRequest(String email, String firstName, String lastName, String role) {
+    public UserDto(String email, String firstName, String lastName, String role) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.role = role;
-        this.isActive = true;
-    }
-
-    /**
-     * @param email
-     * @param firstName
-     * @param lastName
-     * @param role
-     * @param isActive
-     */
-    public UserRequest(String email, String firstName, String lastName, String role, boolean isActive) {
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.role = role;
-        this.isActive = isActive;
     }
 
     /**
@@ -122,17 +115,31 @@ public class UserRequest {
     }
 
     /**
-     * @return the isActive
+     * @return the password
      */
-    public boolean isActive() {
-        return this.isActive;
+    public String getPassword() {
+        return this.password;
     }
 
     /**
-     * @param isActive the isActive to set
+     * @param password the password to set
      */
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @return the status
+     */
+    public String getStatus() {
+        return this.status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }

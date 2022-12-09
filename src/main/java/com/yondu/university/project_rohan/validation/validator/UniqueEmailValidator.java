@@ -1,6 +1,7 @@
-package com.yondu.university.project_rohan.validation;
+package com.yondu.university.project_rohan.validation.validator;
 
 import com.yondu.university.project_rohan.service.UserService;
+import com.yondu.university.project_rohan.validation.UniqueEmail;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

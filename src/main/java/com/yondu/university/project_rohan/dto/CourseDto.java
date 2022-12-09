@@ -2,11 +2,16 @@ package com.yondu.university.project_rohan.dto;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.yondu.university.project_rohan.validation.UniqueCourseCode;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class CourseRequest {
+public class CourseDto {
+    @JsonInclude(Include.NON_EMPTY)
+    private String id;
+
     @NotBlank(message = "Course code is required.")
     @Length(max = 32, message = "Course code maximum length is 32 characters only.")
     @UniqueCourseCode
@@ -19,13 +24,13 @@ public class CourseRequest {
     @NotBlank(message = "Course description is required.")
     private String description;
 
-    private boolean isActive;
+    @JsonInclude(Include.NON_EMPTY)
+    private String status;
 
     /**
      * 
      */
-    public CourseRequest() {
-        this.isActive = true;
+    public CourseDto() {
     }
 
     /**
@@ -33,31 +38,31 @@ public class CourseRequest {
      * @param title
      * @param description
      */
-    public CourseRequest(String code, String title, String description) {
+    public CourseDto(String code, String title, String description) {
         this.code = code;
         this.title = title;
         this.description = description;
-        this.isActive = true;
     }
 
     /**
-     * @param code
-     * @param title
-     * @param description
-     * @param isActive
+     * @return the id
      */
-    public CourseRequest(String code, String title, String description, boolean isActive) {
-        this.code = code;
-        this.title = title;
-        this.description = description;
-        this.isActive = isActive;
+    public String getId() {
+        return this.id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
      * @return the code
      */
     public String getCode() {
-        return code;
+        return this.code;
     }
 
     /**
@@ -71,7 +76,7 @@ public class CourseRequest {
      * @return the title
      */
     public String getTitle() {
-        return title;
+        return this.title;
     }
 
     /**
@@ -85,7 +90,7 @@ public class CourseRequest {
      * @return the description
      */
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     /**
@@ -96,17 +101,17 @@ public class CourseRequest {
     }
 
     /**
-     * @return the isActive
+     * @return the status
      */
-    public boolean isActive() {
-        return isActive;
+    public String getStatus() {
+        return this.status;
     }
 
     /**
-     * @param isActive the isActive to set
+     * @param status the status to set
      */
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }

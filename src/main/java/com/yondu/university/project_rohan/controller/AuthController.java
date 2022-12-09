@@ -23,10 +23,10 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
     }
 
-    @PostMapping("oauth2/token")
+    @PostMapping("login")
     public String token(@RequestBody @Valid LoginRequest loginRequest) {
         Authentication authentication = this.authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
         String token = tokenService.generateToken(authentication);
         return token;
     }
