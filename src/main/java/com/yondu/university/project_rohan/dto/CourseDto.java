@@ -8,7 +8,8 @@ import com.yondu.university.project_rohan.validation.UniqueCourseCode;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class CourseRequest {
+public class CourseDto {
+    @JsonInclude(Include.NON_EMPTY)
     private String id;
 
     @NotBlank(message = "Course code is required.")
@@ -29,7 +30,7 @@ public class CourseRequest {
     /**
      * 
      */
-    public CourseRequest() {
+    public CourseDto() {
     }
 
     /**
@@ -37,7 +38,7 @@ public class CourseRequest {
      * @param title
      * @param description
      */
-    public CourseRequest(String code, String title, String description) {
+    public CourseDto(String code, String title, String description) {
         this.code = code;
         this.title = title;
         this.description = description;

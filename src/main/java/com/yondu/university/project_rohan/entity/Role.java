@@ -1,7 +1,5 @@
 package com.yondu.university.project_rohan.entity;
 
-import org.hibernate.validator.constraints.Length;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +14,6 @@ public class Role {
     private Integer id;
 
     @Column(nullable = false, unique = true, length = 64)
-    @Length(message = "Role name maximum length is 64 characters only.")
     private String name;
 
     /**

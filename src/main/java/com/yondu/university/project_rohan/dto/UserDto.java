@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-public class UserRequest {
+public class UserDto {
     @NotBlank(message = "Email is required.")
     @Email(message = "Email is in invalid format")
     @Length(max = 128, message = "Email maximum length is 128 characters only.")
@@ -30,6 +30,7 @@ public class UserRequest {
 
     @NotBlank(message = "Role is required.")
     @Pattern(regexp = "^(STUDENT|student|SUBJECT MATTER EXPERT|subject matter expert)$", message = "Role can either be 'STUDENT' or 'SUBJECT MATTER EXPERT' only (case-insensitive).")
+    @JsonInclude(Include.NON_EMPTY)
     private String role;
 
     @JsonInclude(Include.NON_EMPTY)
@@ -41,7 +42,7 @@ public class UserRequest {
     /**
      * 
      */
-    public UserRequest() {
+    public UserDto() {
     }
 
     /**
@@ -50,7 +51,7 @@ public class UserRequest {
      * @param lastName
      * @param role
      */
-    public UserRequest(String email, String firstName, String lastName, String role) {
+    public UserDto(String email, String firstName, String lastName, String role) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;

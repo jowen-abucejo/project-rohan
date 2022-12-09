@@ -18,6 +18,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final String ROLE_STUDENT = "STUDENT";
+
     /**
      * @param userRepository
      */
@@ -61,5 +63,13 @@ public class UserService {
         user.setActive(false);
 
         return Optional.of(this.userRepository.save(user));
+    }
+
+    public Optional<User> findStudentByEmailAndIsActive(String email) {
+        return this.userRepository.findByRoleAndEmailAndStatus(ROLE_STUDENT, email, true);
+    }
+
+    public Optional<User> findStudentByCourseClassAndEmail(String courseCode, int batch, String email) {
+        return this.userRepository.findByCourseClassAndEmail(courseCode, batch, email);
     }
 }

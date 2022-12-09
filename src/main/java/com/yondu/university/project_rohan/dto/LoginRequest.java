@@ -3,26 +3,26 @@ package com.yondu.university.project_rohan.dto;
 import jakarta.validation.constraints.NotBlank;
 
 public class LoginRequest {
-    @NotBlank(message = "Username cannot be empty.")
-    private String username;
+    @NotBlank(message = "Email cannot be empty.")
+    private String email;
 
     @NotBlank(message = "Password cannot be empty.")
     private String password;
 
     /**
-     * @param username
+     * @param email
      * @param password
      */
-    public LoginRequest(String username, String password) {
-        this.username = username.trim();
+    public LoginRequest(String email, String password) {
+        this.email = email.trim();
         this.password = password.trim();
     }
 
     /**
-     * @return the username
+     * @return the email
      */
-    public String getUsername() {
-        return this.username;
+    public String getEmail() {
+        return this.email;
     }
 
     /**

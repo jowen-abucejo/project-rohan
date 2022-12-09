@@ -2,7 +2,6 @@ package com.yondu.university.project_rohan.entity;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -15,7 +14,6 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -26,17 +24,12 @@ public class Course {
     private Integer id;
 
     @Column(unique = true, nullable = false, length = 32)
-    @NotBlank(message = "Course code is required.")
-    @Length(max = 32, message = "Course code maximum length is 32 characters only.")
     private String code;
 
     @Column(nullable = false, length = 128)
-    @NotBlank(message = "Course title is required.")
-    @Length(max = 128, message = "Course title maximum length is 128 characters ony.")
     private String title;
 
     @Column(nullable = false)
-    @NotBlank(message = "Course description is required.")
     private String description;
 
     private boolean isActive;
