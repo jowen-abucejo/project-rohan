@@ -34,4 +34,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
         @Query(value = "SELECT u.* FROM user u INNER JOIN student_class sc ON u.id=sc.user_id INNER JOIN class c ON c.id=sc.class_id "
                         + "WHERE c.course_code=:code AND c.batch_number=:batch AND u.email=:email LIMIT 1", nativeQuery = true)
         Optional<User> findByCourseClassAndEmail(String code, int batch, String email);
+
+        @Query(value = "SELECT u.* FROM user u INNER JOIN student_class sc ON u.id=sc.user_id INNER JOIN class c ON c.id=sc.class_id "
+                        + "WHERE c.sme_email=:email AND c.course_code=:code AND c.batch_number=:batch", nativeQuery = true)
+        Page<User> findBySMECourseClassAndEmail(String email, String code, int batch, Pageable pageable);
 }

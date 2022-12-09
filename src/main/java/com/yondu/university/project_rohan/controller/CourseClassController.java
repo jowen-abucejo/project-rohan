@@ -165,18 +165,18 @@ public class CourseClassController {
     }
 
     @GetMapping(path = "courses/{code}/classes/{batch}/students")
-    @PostMapping(path = "courses/{code}/classes/{batch}/unenroll")
     @PreAuthorize("hasRole('SUBJECT_MATTER_EXPERT')")
-    public CourseClassDto getCourseClassStudents(
+    public CustomPage<UserDto> getCourseClassStudents(
             @CurrentSecurityContext(expression = "authentication.getName()") String currentUser,
-            @PathVariable String code, @PathVariable int batch) {
-        Optional<CourseClass> optionalCourseClass = this.classService.findBySMEAndCourseAndBatch(currentUser, code,
-                batch);
-        if (optionalCourseClass.isEmpty()) {
-            throw new ResourceNotFoundException("Class not found.");
-        }
+            @PathVariable String code, @PathVariable int batch, @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        int retrievedPage = Math.max(1, page);
+        Pageable paging = PageRequest.of(retrievedPage - 1, size, Sort.by("id"));
 
-        return convertToCourseClassDTO(optionalCourseClass.get(), true, true, true, true, false);
+        Page<User> students = userService.findStudentsBySMECourseClass(currentUser, code, batch, paging);
+        List<UserDto> studentDtoList = students.getContent().stream()
+                .map(student -> UserController.convertToUserDTO(student, false, false)).collect(Collectors.toList());
+        return new CustomPage<UserDto>(studentDtoList, retrievedPage, size);
     }
 
     public static final CourseClassDto convertToCourseClassDTO(CourseClass courseClass, boolean includeStatus,

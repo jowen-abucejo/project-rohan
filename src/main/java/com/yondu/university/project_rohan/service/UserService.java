@@ -72,4 +72,8 @@ public class UserService {
     public Optional<User> findStudentByCourseClassAndEmail(String courseCode, int batch, String email) {
         return this.userRepository.findByCourseClassAndEmail(courseCode, batch, email);
     }
+
+    public Page<User> findStudentsBySMECourseClass(String smeEmail, String courseCode, int batch, Pageable pageable) {
+        return this.userRepository.findBySMECourseClassAndEmail(smeEmail, courseCode, batch, pageable);
+    }
 }
