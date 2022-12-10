@@ -1,7 +1,6 @@
 package com.yondu.university.project_rohan.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.yondu.university.project_rohan.dto.CourseDto;
 import com.yondu.university.project_rohan.dto.CustomPage;
 import com.yondu.university.project_rohan.entity.Course;
-import com.yondu.university.project_rohan.exception.ResourceNotFoundException;
 import com.yondu.university.project_rohan.service.CourseService;
 
 import jakarta.validation.Valid;
@@ -61,23 +59,13 @@ public class CourseController {
     @GetMapping(path = "{code}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUBJECT_MATTER_EXPERT')")
     public CourseDto getCourse(@PathVariable String code) {
-        Optional<Course> optionalCourse = this.courseService.findByCode(code.trim());
-        if (optionalCourse.isEmpty()) {
-            throw new ResourceNotFoundException("Course not found.");
-        }
-
-        return convertToCourseDTO(optionalCourse.get(), true, true);
+        return convertToCourseDTO(this.courseService.findByCode(code), true, true);
     }
 
     @PostMapping(path = "{code}/deactivate")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUBJECT_MATTER_EXPERT')")
     public CourseDto deactivateCourse(@PathVariable String code) {
-        Optional<Course> optionalCourse = this.courseService.deactivateCourse(code);
-        if (optionalCourse.isEmpty()) {
-            throw new ResourceNotFoundException("Course not found.");
-        }
-
-        return convertToCourseDTO(optionalCourse.get(), true, true);
+        return convertToCourseDTO(this.courseService.deactivateCourse(code), true, true);
     }
 
     @GetMapping(path = "search")

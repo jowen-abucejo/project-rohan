@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.yondu.university.project_rohan.entity.User;
+import com.yondu.university.project_rohan.exception.ResourceNotFoundException;
 import com.yondu.university.project_rohan.repository.UserRepository;
 import com.yondu.university.project_rohan.util.PasswordGenerator;
 
@@ -49,20 +50,26 @@ public class UserService {
         return this.userRepository.findByEmailOrFirstNameOrLastName(searchKey, currentUser, pageable);
     }
 
-    public Optional<User> findByEmail(String email) {
-        return this.userRepository.findByEmail(email);
-    }
-
-    public Optional<User> deactivateUser(String email) {
+    public User findByEmail(String email) {
         Optional<User> optionalUser = this.userRepository.findByEmail(email);
         if (optionalUser.isEmpty()) {
-            return optionalUser;
+            throw new ResourceNotFoundException("User not found.");
+        }
+
+        return optionalUser.get();
+
+    }
+
+    public User deactivateUser(String email) {
+        Optional<User> optionalUser = this.userRepository.findByEmail(email);
+        if (optionalUser.isEmpty()) {
+            throw new ResourceNotFoundException("User not found.");
         }
 
         User user = optionalUser.get();
         user.setActive(false);
 
-        return Optional.of(this.userRepository.save(user));
+        return this.userRepository.save(user);
     }
 
     public Optional<User> findStudentByEmailAndIsActive(String email) {

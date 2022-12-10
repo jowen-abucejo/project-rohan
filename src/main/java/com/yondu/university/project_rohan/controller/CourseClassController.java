@@ -1,7 +1,6 @@
 package com.yondu.university.project_rohan.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -23,7 +22,6 @@ import com.yondu.university.project_rohan.dto.EnrollmentRequest;
 import com.yondu.university.project_rohan.dto.UserDto;
 import com.yondu.university.project_rohan.entity.CourseClass;
 import com.yondu.university.project_rohan.entity.User;
-import com.yondu.university.project_rohan.exception.ResourceNotFoundException;
 import com.yondu.university.project_rohan.service.CourseClassService;
 import com.yondu.university.project_rohan.service.CourseService;
 import com.yondu.university.project_rohan.service.UserService;
@@ -96,13 +94,10 @@ public class CourseClassController {
     public CourseClassDto getCourseClass(
             @CurrentSecurityContext(expression = "authentication.getName()") String currentUser,
             @PathVariable String code, @PathVariable int batch) {
-        Optional<CourseClass> optionalCourseClass = this.classService.findBySMEAndCourseAndBatch(currentUser, code,
+        CourseClass courseClass = this.classService.findBySMEAndCourseAndBatch(currentUser, code,
                 batch);
-        if (optionalCourseClass.isEmpty()) {
-            throw new ResourceNotFoundException("Class not found.");
-        }
 
-        return convertToCourseClassDTO(optionalCourseClass.get(), true, true, true, false, false);
+        return convertToCourseClassDTO(courseClass, true, true, true, false, false);
     }
 
     @PostMapping(path = "courses/{code}/classes/{batch}/deactivate")
@@ -110,12 +105,9 @@ public class CourseClassController {
     public CourseClassDto deactivateCourseClass(
             @CurrentSecurityContext(expression = "authentication.getName()") String currentUser,
             @PathVariable String code, @PathVariable int batch) {
-        Optional<CourseClass> optionalCourseClass = this.classService.deactivateCourseClass(currentUser, code, batch);
-        if (optionalCourseClass.isEmpty()) {
-            throw new ResourceNotFoundException("Non-ongoing class not found.");
-        }
 
-        return convertToCourseClassDTO(optionalCourseClass.get(), true, true, true, false, false);
+        return convertToCourseClassDTO(this.classService.deactivateCourseClass(currentUser, code, batch), true, true,
+                true, false, false);
     }
 
     @PostMapping(path = "courses/{code}/classes/{batch}/enroll")
@@ -125,19 +117,10 @@ public class CourseClassController {
             @PathVariable String code, @PathVariable int batch,
             @RequestBody @Valid EnrollmentRequest enrollmentRequest) {
 
-        Optional<User> optionalStudent = userService.findStudentByEmailAndIsActive(enrollmentRequest.getEmail());
-        if (optionalStudent.isEmpty()) {
-            throw new ResourceNotFoundException("Email don't match to any active student.");
-        }
+        CourseClass courseClass = this.classService
+                .enrollStudentToSMECourseClass(enrollmentRequest.getEmail(), currentUser, code, batch);
 
-        Optional<CourseClass> optionalCourseClass = this.classService
-                .enrollStudentToSMECourseClass(optionalStudent.get(), currentUser, code, batch);
-        if (optionalCourseClass.isEmpty()) {
-            throw new ResourceNotFoundException(
-                    "Class with the given course and batch not found or enrollment closed.");
-        }
-
-        return convertToCourseClassDTO(optionalCourseClass.get(), true, true, true, true, false);
+        return convertToCourseClassDTO(courseClass, true, true, true, true, false);
     }
 
     @PostMapping(path = "courses/{code}/classes/{batch}/unenroll")
@@ -147,21 +130,10 @@ public class CourseClassController {
             @PathVariable String code, @PathVariable int batch,
             @RequestBody @Valid EnrollmentRequest enrollmentRequest) {
 
-        Optional<User> optionalStudent = userService.findStudentByCourseClassAndEmail(code, batch,
-                enrollmentRequest.getEmail());
-        if (optionalStudent.isEmpty()) {
-            throw new ResourceNotFoundException(
-                    "Email don't match to any student enrolled in given class or class doesn't exist.");
-        }
+        CourseClass courseClass = this.classService
+                .unEnrollStudentFromSMECourseClass(enrollmentRequest.getEmail(), currentUser, code, batch);
 
-        Optional<CourseClass> optionalCourseClass = this.classService
-                .unEnrollStudentFromSMECourseClass(optionalStudent.get(), currentUser, code, batch);
-        if (optionalCourseClass.isEmpty()) {
-            throw new ResourceNotFoundException(
-                    "Non-ongoing class with the given course and batch not found.");
-        }
-
-        return convertToCourseClassDTO(optionalCourseClass.get(), true, true, true, true, false);
+        return convertToCourseClassDTO(courseClass, true, true, true, true, false);
     }
 
     @GetMapping(path = "courses/{code}/classes/{batch}/students")
@@ -231,8 +203,8 @@ public class CourseClassController {
         courseClass.setStartDate(courseClassDto.getStartDate());
         courseClass.setEndDate(courseClassDto.getEndDate());
 
-        courseClass.setCourse(courseService.findByCode(courseClassDto.getCourseCode()).get());
-        courseClass.setSubjectMatterExpert(userService.findByEmail(sme_email).get());
+        courseClass.setCourse(courseService.findByCode(courseClassDto.getCourseCode()));
+        courseClass.setSubjectMatterExpert(userService.findByEmail(sme_email));
 
         return courseClass;
     }

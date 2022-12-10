@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -47,7 +48,8 @@ public class Activity {
     private String type;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "class_id", nullable = false)
+    @JoinColumn(name = "class_id", nullable = false, updatable = false)
+    @JsonBackReference("activity")
     private CourseClass courseClass;
 
     @CreatedBy
@@ -66,8 +68,9 @@ public class Activity {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @JsonBackReference
-    @OneToMany(mappedBy = "activity")
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "activity_id")
+    @JsonBackReference("activity")
     private List<Score> scores = new ArrayList<>();
 
     /**
@@ -233,6 +236,9 @@ public class Activity {
         this.courseClass = courseClass;
     }
 
+    /**
+     * @param scores the scores to set
+     */
     public void setScores(List<Score> scores) {
         this.scores = scores;
     }

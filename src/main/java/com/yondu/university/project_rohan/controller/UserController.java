@@ -2,7 +2,6 @@ package com.yondu.university.project_rohan.controller;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,7 +23,6 @@ import com.yondu.university.project_rohan.dto.CustomPage;
 import com.yondu.university.project_rohan.dto.UserDto;
 import com.yondu.university.project_rohan.entity.Role;
 import com.yondu.university.project_rohan.entity.User;
-import com.yondu.university.project_rohan.exception.ResourceNotFoundException;
 import com.yondu.university.project_rohan.service.RoleService;
 import com.yondu.university.project_rohan.service.UserService;
 
@@ -70,24 +68,14 @@ public class UserController {
     @GetMapping(path = "{email}")
     @PreAuthorize("hasRole('ADMIN')")
     public UserDto getUser(@PathVariable String email) {
-        Optional<User> optionalUser = this.userService.findByEmail(email.trim());
-        if (optionalUser.isEmpty()) {
-            throw new ResourceNotFoundException("User not found.");
-        }
-
-        return convertToUserDTO(optionalUser.get(), false, false);
+        return convertToUserDTO(this.userService.findByEmail(email.trim()), true, false);
     }
 
     @PostMapping(path = "{email}/deactivate")
     @PreAuthorize("hasRole('ADMIN')")
     public UserDto deactivateUser(@PathVariable String email) {
-        Optional<User> optionalUser = this.userService.deactivateUser(email);
-        if (optionalUser.isEmpty()) {
-            throw new ResourceNotFoundException("User not found.");
-        }
-
-        UserDto userRequest = convertToUserDTO(optionalUser.get(), true, false);
-        return userRequest;
+        User user = this.userService.deactivateUser(email);
+        return convertToUserDTO(user, true, false);
     }
 
     @GetMapping(path = "search")

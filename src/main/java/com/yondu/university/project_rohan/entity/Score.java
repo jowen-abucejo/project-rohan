@@ -27,8 +27,9 @@ public class Score {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @JsonManagedReference
     @ManyToOne(optional = false)
+    @JoinColumn(name = "activity_id")
+    @JsonManagedReference("activity")
     private Activity activity;
 
     @JsonBackReference

@@ -1,7 +1,5 @@
 package com.yondu.university.project_rohan.controller;
 
-import java.util.Optional;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.yondu.university.project_rohan.dto.ActivityDto;
 import com.yondu.university.project_rohan.entity.Activity;
 import com.yondu.university.project_rohan.entity.CourseClass;
-import com.yondu.university.project_rohan.exception.ResourceNotFoundException;
 import com.yondu.university.project_rohan.service.ActivityService;
 import com.yondu.university.project_rohan.service.CourseClassService;
 
@@ -39,12 +36,9 @@ public class ActivityController {
             @PathVariable String code, @PathVariable int batch,
             @RequestBody @Valid ActivityDto quizDto) {
 
-        Optional<CourseClass> optionalCourseClass = classService.findBySMEAndCourseAndBatch(currentUser, code, batch);
-        if (optionalCourseClass.isEmpty()) {
-            throw new ResourceNotFoundException("Class with the given course and batch not found.");
-        }
+        CourseClass courseClass = classService.findBySMEAndCourseAndBatch(currentUser, code, batch);
         Activity quiz = convertToActivityEntity(quizDto);
-        quiz.setCourseClass(optionalCourseClass.get());
+        quiz.setCourseClass(courseClass);
 
         return convertToActivityDTO(this.activityService.saveNewQuiz(quiz));
     }
@@ -56,90 +50,19 @@ public class ActivityController {
             @PathVariable String code, @PathVariable int batch,
             @RequestBody @Valid ActivityDto exerciseDto) {
 
-        Optional<CourseClass> optionalCourseClass = classService.findBySMEAndCourseAndBatch(currentUser, code, batch);
-        if (optionalCourseClass.isEmpty()) {
-            throw new ResourceNotFoundException("Class with the given course and batch not found.");
-        }
+        CourseClass courseClass = classService.findBySMEAndCourseAndBatch(currentUser, code, batch);
         Activity exercise = convertToActivityEntity(exerciseDto);
-        exercise.setCourseClass(optionalCourseClass.get());
+        exercise.setCourseClass(courseClass);
 
         return convertToActivityDTO(this.activityService.saveNewExercise(exercise));
     }
-
-    // @DeleteMapping(path = "courses/{code}/classes/{batch}/quizzes/{id}/delete")
-    // @PreAuthorize("hasRole('SUBJECT_MATTER_EXPERT')")
-    // public ActivityDto deleteQuiz(
-    // @CurrentSecurityContext(expression = "authentication.getName()") String
-    // currentUser,
-    // @PathVariable String code, @PathVariable int batch,
-    // @PathVariable int id) {
-
-    // Optional<CourseClass> optionalCourseClass =
-    // classService.findBySMEAndCourseAndBatch(currentUser, code, batch);
-    // if (optionalCourseClass.isEmpty()) {
-    // throw new ResourceNotFoundException("Class with the given course and batch
-    // not found.");
-    // }
-
-    // Optional<Activity> optionalQuiz = this.activityService.deleteQuiz(id,
-    // optionalCourseClass.get().getId());
-
-    // if (optionalQuiz.isEmpty()) {
-    // throw new ResourceNotFoundException("Quiz not found.");
-    // }
-
-    // Activity quiz = optionalQuiz.get();
-    // if (!quiz.getScores().isEmpty()) {
-    // throw new ResourceNotFoundException("Quiz cannot be deleted.");
-    // }
-
-    // return convertToActivityDTO(quiz);
-    // }
-
-    // @DeleteMapping(path = "courses/{code}/classes/{batch}/exercises/{id}/delete")
-    // @PreAuthorize("hasRole('SUBJECT_MATTER_EXPERT')")
-    // public ActivityDto deleteExercise(
-    // @CurrentSecurityContext(expression = "authentication.getName()") String
-    // currentUser,
-    // @PathVariable String code, @PathVariable int batch,
-    // @PathVariable int id) {
-
-    // Optional<CourseClass> optionalCourseClass =
-    // classService.findBySMEAndCourseAndBatch(currentUser, code, batch);
-    // if (optionalCourseClass.isEmpty()) {
-    // throw new ResourceNotFoundException("Class with the given course and batch
-    // not found.");
-    // }
-
-    // Optional<Activity> optionalExercise = this.activityService.deleteExercise(id,
-    // optionalCourseClass.get().getId());
-
-    // if (optionalExercise.isEmpty()) {
-    // throw new ResourceNotFoundException("Exercise not found.");
-    // }
-
-    // Activity exercise = optionalExercise.get();
-    // if (!exercise.getScores().isEmpty()) {
-    // throw new ResourceNotFoundException("Exercise cannot be deleted.");
-    // }
-
-    // return convertToActivityDTO(exercise);
-    // }
 
     @DeleteMapping(path = "quizzes/{id}/delete")
     @PreAuthorize("hasRole('SUBJECT_MATTER_EXPERT')")
     public ActivityDto deleteQuizById(
             @CurrentSecurityContext(expression = "authentication.getName()") String currentUser, @PathVariable int id) {
-        Optional<Activity> optionalActivity = this.activityService.deleteQuizByIdAndSMEEmail(id, currentUser);
-        if (optionalActivity.isEmpty()) {
-            throw new ResourceNotFoundException("Quiz not found.");
-        }
 
-        Activity quiz = optionalActivity.get();
-        if (!quiz.getScores().isEmpty()) {
-            throw new ResourceNotFoundException("Quiz cannot be deleted.");
-        }
-
+        Activity quiz = this.activityService.deleteQuizByIdAndSMEEmail(id, currentUser);
         return convertToActivityDTO(quiz);
     }
 
@@ -147,16 +70,8 @@ public class ActivityController {
     @PreAuthorize("hasRole('SUBJECT_MATTER_EXPERT')")
     public ActivityDto deleteExerciseById(
             @CurrentSecurityContext(expression = "authentication.getName()") String currentUser, @PathVariable int id) {
-        Optional<Activity> optionalActivity = this.activityService.deleteExerciseByIdAndSMEEmail(id, currentUser);
-        if (optionalActivity.isEmpty()) {
-            throw new ResourceNotFoundException("Exercise not found.");
-        }
 
-        Activity exercise = optionalActivity.get();
-        if (!exercise.getScores().isEmpty()) {
-            throw new ResourceNotFoundException("Exercise cannot be deleted.");
-        }
-
+        Activity exercise = this.activityService.deleteExerciseByIdAndSMEEmail(id, currentUser);
         return convertToActivityDTO(exercise);
     }
 
