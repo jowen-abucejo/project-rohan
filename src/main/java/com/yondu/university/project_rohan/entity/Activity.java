@@ -11,6 +11,8 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -64,6 +66,7 @@ public class Activity {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "activity")
     private List<Score> scores = new ArrayList<>();
 
