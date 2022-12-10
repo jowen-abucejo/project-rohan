@@ -2,6 +2,8 @@ package com.yondu.university.project_rohan.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -42,7 +45,7 @@ public class Activity {
     private String type;
 
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "class_id", nullable = false)
     private CourseClass courseClass;
 
     @CreatedBy
@@ -60,6 +63,9 @@ public class Activity {
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "activity")
+    private List<Score> scores = new ArrayList<>();
 
     /**
      * 
@@ -79,10 +85,11 @@ public class Activity {
      * @param createdAt
      * @param updatedBy
      * @param updatedAt
+     * @param scores
      */
     public Activity(Integer id, String title, Integer maxScore, Integer minScore, LocalDate schedule, String type,
             CourseClass courseClass, String createdBy, LocalDateTime createdAt, String updatedBy,
-            LocalDateTime updatedAt) {
+            LocalDateTime updatedAt, List<Score> scores) {
         this.id = id;
         this.title = title;
         this.maxScore = maxScore;
@@ -94,6 +101,7 @@ public class Activity {
         this.createdAt = createdAt;
         this.updatedBy = updatedBy;
         this.updatedAt = updatedAt;
+        this.scores = scores;
     }
 
     /**
@@ -174,6 +182,13 @@ public class Activity {
     }
 
     /**
+     * @return the scores
+     */
+    public List<Score> getScores() {
+        return scores;
+    }
+
+    /**
      * @param title the title to set
      */
     public void setTitle(String title) {
@@ -213,6 +228,10 @@ public class Activity {
      */
     public void setCourseClass(CourseClass courseClass) {
         this.courseClass = courseClass;
+    }
+
+    public void setScores(List<Score> scores) {
+        this.scores = scores;
     }
 
 }

@@ -2,13 +2,33 @@ package com.yondu.university.project_rohan.dto;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yondu.university.project_rohan.validation.CountMin;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+@CountMin(start = "minScore", end = "maxScore", min = 1, message = "Invalid min and max score")
 public class ActivityDto {
     private String id;
+
+    @JsonProperty(value = "course_code")
     private String courseCode;
+
     private int batch;
+
+    @NotBlank(message = "Title cannot be empty.")
     private String title;
-    private int maxScore;
-    private int minScore;
+
+    @NotNull(message = "Max score is required.")
+    @JsonProperty(value = "max_score")
+    private Integer maxScore;
+
+    @NotNull(message = "Min score is required.")
+    @JsonProperty(value = "min_score")
+    private Integer minScore;
+
+    @NotNull(message = "Date is required.")
     private LocalDate date;
 
     /**
@@ -18,16 +38,12 @@ public class ActivityDto {
     }
 
     /**
-     * @param courseCode
-     * @param batch
      * @param title
      * @param maxScore
      * @param minScore
      * @param date
      */
-    public ActivityDto(String courseCode, int batch, String title, int maxScore, int minScore, LocalDate date) {
-        this.courseCode = courseCode;
-        this.batch = batch;
+    public ActivityDto(String title, Integer maxScore, Integer minScore, LocalDate date) {
         this.title = title;
         this.maxScore = maxScore;
         this.minScore = minScore;
@@ -51,7 +67,7 @@ public class ActivityDto {
     /**
      * @return the batch
      */
-    public int getBatch() {
+    public Integer getBatch() {
         return batch;
     }
 
@@ -65,14 +81,14 @@ public class ActivityDto {
     /**
      * @return the maxScore
      */
-    public int getMaxScore() {
+    public Integer getMaxScore() {
         return maxScore;
     }
 
     /**
      * @return the minScore
      */
-    public int getMinScore() {
+    public Integer getMinScore() {
         return minScore;
     }
 
