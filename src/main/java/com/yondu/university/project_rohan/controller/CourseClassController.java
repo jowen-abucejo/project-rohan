@@ -164,6 +164,34 @@ public class CourseClassController {
                 return new GradeSheetDto(classDto);
         }
 
+        @GetMapping(path = "student/classes")
+        @PreAuthorize("hasRole('STUDENT')")
+        public CustomPage<CourseClassDto> getStudentCourseClasses(
+                        @CurrentSecurityContext(expression = "authentication.getName()") String currentUser,
+                        @RequestParam(defaultValue = "1") int page,
+                        @RequestParam(defaultValue = "10") int size) {
+                int retrievedPage = Math.max(1, page);
+                Pageable paging = PageRequest.of(retrievedPage - 1, size, Sort.by("id"));
+
+                Page<CourseClass> results = this.classService.findAllByStudentEmail(currentUser, paging);
+                List<CourseClassDto> courseClassDtoList = results.getContent().stream()
+                                .map(courseClass -> new CourseClassDto(courseClass).withStatus().withCourse(false)
+                                                .withSME())
+                                .collect(Collectors.toList());
+                return new CustomPage<CourseClassDto>(courseClassDtoList, retrievedPage, size);
+        }
+
+        @GetMapping(path = "student/courses/{code}/classes/{batch}/grade-sheet")
+        @PreAuthorize("hasRole('STUDENT')")
+        public GradeSheetDto getStudentCourseClassGradeSheet(
+                        @CurrentSecurityContext(expression = "authentication.getName()") String currentUser,
+                        @PathVariable String code,
+                        @PathVariable int batch) {
+
+                User student = userService.findByEmail(currentUser);
+                return new GradeSheetDto(new UserDto(student), code, batch);
+        }
+
         public static final CourseClass convertToCourseClassEntity(String sme_email, CourseClassDto courseClassDto) {
                 CourseClass courseClass = new CourseClass();
                 courseClass.setQuizPercentage(courseClassDto.getQuizPercentage());

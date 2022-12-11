@@ -42,4 +42,8 @@ public interface CourseClassRepository extends JpaRepository<CourseClass, Intege
         @Query(value = "SELECT * FROM class WHERE sme_email=:email AND course_code=:code AND batch_number=:batch "
                         + "AND CURDATE() < start_date LIMIT 1", nativeQuery = true)
         Optional<CourseClass> findBySMEAndCourseCodeAndBatchAndOpen(String email, String code, int batch);
+
+        @Query(value = "SELECT c.* FROM class c INNER JOIN student_class sc ON c.id=sc.class_id INNER JOIN user u "
+                        + "ON sc.user_id=u.id WHERE u.email=:email", nativeQuery = true)
+        Page<CourseClass> findAllByStudentEmail(String email, Pageable paging);
 }

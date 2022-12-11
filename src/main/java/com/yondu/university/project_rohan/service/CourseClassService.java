@@ -95,4 +95,8 @@ public class CourseClassService {
 
         return this.classRepository.save(courseClass);
     }
+
+    public Page<CourseClass> findAllByStudentEmail(String email, Pageable paging) {
+        return this.classRepository.findAllByStudentEmail(email, paging);
+    }
 }
