@@ -1,7 +1,9 @@
 package com.yondu.university.project_rohan.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.yondu.university.project_rohan.entity.Score;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -13,6 +15,7 @@ public class ScoreDto {
 
     private ActivityDto activity;
 
+    @JsonInclude(Include.NON_EMPTY)
     private UserDto student;
 
     @Email
@@ -22,6 +25,9 @@ public class ScoreDto {
 
     @NotNull(message = "Score cannot be empty")
     private Integer score;
+
+    @JsonIgnore
+    private Score scoreEntity;
 
     /**
      * 
@@ -34,10 +40,19 @@ public class ScoreDto {
      * @param email
      * @param score
      */
-    public ScoreDto(String id, String email, Integer score) {
-        this.id = id;
+    public ScoreDto(String email, Integer score) {
         this.email = email;
         this.score = score;
+    }
+
+    /**
+     * 
+     */
+    public ScoreDto(Score score) {
+        this.scoreEntity = score;
+        this.score = score.getScore();
+        this.activity = new ActivityDto(score.getActivity());
+        this.student = new UserDto(score.getStudent()).withStatus();
     }
 
     /**
@@ -108,6 +123,12 @@ public class ScoreDto {
      */
     public void setStudent(UserDto student) {
         this.student = student;
+    }
+
+    @JsonIgnore
+    public ScoreDto withoutStudent() {
+        this.student = null;
+        return this;
     }
 
 }

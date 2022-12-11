@@ -54,7 +54,7 @@ public class UserController {
 
         Page<User> results = this.userService.findAllExceptCurrentUser(currentUser, role, paging);
         List<UserDto> userRequestList = results.getContent().stream()
-                .map(user -> convertToUserDTO(user, false, false)).collect(Collectors.toList());
+                .map(user -> new UserDto(user)).collect(Collectors.toList());
         return new CustomPage<UserDto>(userRequestList, retrievedPage, size);
     }
 
@@ -62,20 +62,21 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public UserDto saveNewUser(@RequestBody @Valid UserDto userRequest) {
         User newUser = userService.saveNewUser(convertToUserEntity(userRequest));
-        return convertToUserDTO(newUser, false, true);
+        return new UserDto(newUser).withPassword();
     }
 
     @GetMapping(path = "{email}")
     @PreAuthorize("hasRole('ADMIN')")
     public UserDto getUser(@PathVariable String email) {
-        return convertToUserDTO(this.userService.findByEmail(email.trim()), true, false);
+        User user = this.userService.findByEmail(email);
+        return new UserDto(user).withStatus();
     }
 
     @PostMapping(path = "{email}/deactivate")
     @PreAuthorize("hasRole('ADMIN')")
     public UserDto deactivateUser(@PathVariable String email) {
         User user = this.userService.deactivateUser(email);
-        return convertToUserDTO(user, true, false);
+        return new UserDto(user).withStatus();
     }
 
     @GetMapping(path = "search")
@@ -90,30 +91,8 @@ public class UserController {
 
         Page<User> results = this.userService.searchUsers(key, currentUser, paging);
         List<UserDto> userRequestList = results.getContent().stream()
-                .map(user -> convertToUserDTO(user, false, false)).collect(Collectors.toList());
+                .map(user -> new UserDto(user)).collect(Collectors.toList());
         return new CustomPage<UserDto>(userRequestList, retrievedPage, size);
-    }
-
-    public static final UserDto convertToUserDTO(User user, boolean includeStatus, boolean includePassword) {
-        UserDto userRequest = new UserDto(
-                user.getEmail(),
-                user.getFirstName(),
-                user.getLastName(),
-                String.join(",",
-                        user.getRoles().stream().map(role -> role.getName()).collect(Collectors.toList())));
-
-        if (includeStatus) {
-            if (user.isActive()) {
-                userRequest.setStatus("Active");
-            } else {
-                userRequest.setStatus("Inactive");
-            }
-        }
-
-        if (includePassword)
-            userRequest.setPassword(user.getPassword());
-
-        return userRequest;
     }
 
     public static final User convertToUserEntity(UserDto userRequest) {

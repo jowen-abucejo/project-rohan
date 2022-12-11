@@ -3,10 +3,13 @@ package com.yondu.university.project_rohan.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.yondu.university.project_rohan.entity.CourseClass;
 import com.yondu.university.project_rohan.validation.CourseCodeExists;
 import com.yondu.university.project_rohan.validation.DayCountMin;
 import com.yondu.university.project_rohan.validation.HundredGradingPercentage;
@@ -77,6 +80,9 @@ public class CourseClassDto {
     @JsonInclude(value = Include.NON_EMPTY)
     private List<UserDto> students;
 
+    @JsonIgnore
+    private CourseClass courseClass;
+
     /**
      * 
      */
@@ -102,6 +108,20 @@ public class CourseClassDto {
         this.attendancePercentage = attendancePercentage;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    /**
+     * 
+     */
+    public CourseClassDto(CourseClass courseClass) {
+        this.courseClass = courseClass;
+        this.batch = courseClass.getBatchNumber();
+        this.quizPercentage = courseClass.getQuizPercentage();
+        this.exercisePercentage = courseClass.getExercisePercentage();
+        this.projectPercentage = courseClass.getProjectPercentage();
+        this.attendancePercentage = courseClass.getAttendancePercentage();
+        this.startDate = courseClass.getStartDate();
+        this.endDate = courseClass.getEndDate();
     }
 
     /**
@@ -270,6 +290,55 @@ public class CourseClassDto {
      */
     public void setStudents(List<UserDto> students) {
         this.students = students;
+    }
+
+    @JsonIgnore
+    public CourseClassDto withStatus() {
+        if (this.courseClass != null) {
+            if (courseClass.isActive()) {
+                this.status = "Active";
+            } else {
+                this.status = "Inactive";
+            }
+        }
+        return this;
+    }
+
+    @JsonIgnore
+    public CourseClassDto withCourse(Boolean withCourseId) {
+        if (this.courseClass != null) {
+            this.course = new CourseDto(this.courseClass.getCourse()).withStatus();
+            if (withCourseId) {
+                this.course.withId();
+            }
+        }
+        return this;
+    }
+
+    @JsonIgnore
+    public CourseClassDto withCourseCode(Boolean withCourseId) {
+        if (this.courseClass != null) {
+            this.courseCode = this.courseClass.getCourse().getCode();
+        }
+        return this;
+    }
+
+    @JsonIgnore
+    public CourseClassDto withSME() {
+        if (this.courseClass != null) {
+            this.sme = new UserDto(this.courseClass.getSubjectMatterExpert()).withStatus();
+        }
+        return this;
+    }
+
+    @JsonIgnore
+    public CourseClassDto withStudents() {
+        if (this.courseClass != null) {
+            this.students = this.courseClass.getStudents().stream().map(
+                    student -> new UserDto(student).withoutRole())
+                    .collect(Collectors.toList());
+        }
+        return this;
     }
 
 }

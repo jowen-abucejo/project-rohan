@@ -40,7 +40,7 @@ public class ActivityController {
         Activity quiz = convertToActivityEntity(quizDto);
         quiz.setCourseClass(courseClass);
 
-        return convertToActivityDTO(this.activityService.saveNewQuiz(quiz));
+        return new ActivityDto(this.activityService.saveNewQuiz(quiz));
     }
 
     @PostMapping(path = "courses/{code}/classes/{batch}/exercises")
@@ -54,7 +54,7 @@ public class ActivityController {
         Activity exercise = convertToActivityEntity(exerciseDto);
         exercise.setCourseClass(courseClass);
 
-        return convertToActivityDTO(this.activityService.saveNewExercise(exercise));
+        return new ActivityDto(this.activityService.saveNewExercise(exercise));
     }
 
     @DeleteMapping(path = "quizzes/{id}/delete")
@@ -63,7 +63,7 @@ public class ActivityController {
             @CurrentSecurityContext(expression = "authentication.getName()") String currentUser, @PathVariable int id) {
 
         Activity quiz = this.activityService.deleteQuizByIdAndSMEEmail(id, currentUser);
-        return convertToActivityDTO(quiz);
+        return new ActivityDto(quiz);
     }
 
     @DeleteMapping(path = "exercises/{id}/delete")
@@ -72,20 +72,7 @@ public class ActivityController {
             @CurrentSecurityContext(expression = "authentication.getName()") String currentUser, @PathVariable int id) {
 
         Activity exercise = this.activityService.deleteExerciseByIdAndSMEEmail(id, currentUser);
-        return convertToActivityDTO(exercise);
-    }
-
-    public static final ActivityDto convertToActivityDTO(Activity activity) {
-        ActivityDto activityDto = new ActivityDto();
-        activityDto.setId(activity.getId() + "");
-        activityDto.setCourseCode(activity.getCourseClass().getCourse().getCode());
-        activityDto.setBatch(activity.getCourseClass().getBatchNumber());
-        activityDto.setTitle(activity.getTitle());
-        activityDto.setMaxScore(activity.getMaxScore());
-        activityDto.setMinScore(activity.getMinScore());
-        activityDto.setDate(activity.getSchedule());
-
-        return activityDto;
+        return new ActivityDto(exercise);
     }
 
     public static final Activity convertToActivityEntity(ActivityDto activityDto) {

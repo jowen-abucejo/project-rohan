@@ -2,8 +2,10 @@ package com.yondu.university.project_rohan.dto;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.yondu.university.project_rohan.entity.Course;
 import com.yondu.university.project_rohan.validation.UniqueCourseCode;
 
 import jakarta.validation.constraints.NotBlank;
@@ -27,6 +29,9 @@ public class CourseDto {
     @JsonInclude(Include.NON_EMPTY)
     private String status;
 
+    @JsonIgnore
+    private Course course;
+
     /**
      * 
      */
@@ -42,6 +47,16 @@ public class CourseDto {
         this.code = code;
         this.title = title;
         this.description = description;
+    }
+
+    /**
+     * @param course
+     */
+    public CourseDto(Course course) {
+        this.course = course;
+        this.code = course.getCode();
+        this.title = course.getTitle();
+        this.description = course.getDescription();
     }
 
     /**
@@ -112,6 +127,26 @@ public class CourseDto {
      */
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @JsonIgnore
+    public CourseDto withId() {
+        if (this.course != null) {
+            this.id = this.course.getId() + "";
+        }
+        return this;
+    }
+
+    @JsonIgnore
+    public CourseDto withStatus() {
+        if (this.course != null) {
+            if (this.course.isActive()) {
+                this.status = "Active";
+            } else {
+                this.status = "Inactive";
+            }
+        }
+        return this;
     }
 
 }

@@ -55,7 +55,7 @@ public class CourseClassController {
 
         Page<CourseClass> results = this.classService.findAllBySMEEmail(currentUser, paging);
         List<CourseClassDto> courseClassDtoList = results.getContent().stream()
-                .map(courseClass -> convertToCourseClassDTO(courseClass, true, true, true, false, true))
+                .map(courseClass -> new CourseClassDto(courseClass).withStatus().withCourse(true).withSME())
                 .collect(Collectors.toList());
         return new CustomPage<CourseClassDto>(courseClassDtoList, retrievedPage, size);
     }
@@ -68,9 +68,7 @@ public class CourseClassController {
         CourseClass newClass = this.classService
                 .saveNewCourseClass(convertToCourseClassEntity(currentUser, courseClassDto));
 
-        courseClassDto = convertToCourseClassDTO(newClass, true, true, true, false, false);
-
-        return courseClassDto;
+        return new CourseClassDto(newClass).withStatus().withCourse(false).withSME();
     }
 
     @GetMapping(path = "classes/search")
@@ -84,7 +82,7 @@ public class CourseClassController {
 
         Page<CourseClass> results = this.classService.searchSMEClasses(currentUser, key, paging);
         List<CourseClassDto> courseClassDtoList = results.getContent().stream()
-                .map(courseClass -> convertToCourseClassDTO(courseClass, true, true, true, false, false))
+                .map(courseClass -> new CourseClassDto(courseClass).withStatus().withCourse(false).withSME())
                 .collect(Collectors.toList());
         return new CustomPage<CourseClassDto>(courseClassDtoList, retrievedPage, size);
     }
@@ -96,8 +94,7 @@ public class CourseClassController {
             @PathVariable String code, @PathVariable int batch) {
         CourseClass courseClass = this.classService.findBySMEAndCourseAndBatch(currentUser, code,
                 batch);
-
-        return convertToCourseClassDTO(courseClass, true, true, true, false, false);
+        return new CourseClassDto(courseClass).withStatus().withCourse(false).withSME();
     }
 
     @PostMapping(path = "courses/{code}/classes/{batch}/deactivate")
@@ -106,8 +103,8 @@ public class CourseClassController {
             @CurrentSecurityContext(expression = "authentication.getName()") String currentUser,
             @PathVariable String code, @PathVariable int batch) {
 
-        return convertToCourseClassDTO(this.classService.deactivateCourseClass(currentUser, code, batch), true, true,
-                true, false, false);
+        CourseClass courseClass = this.classService.deactivateCourseClass(currentUser, code, batch);
+        return new CourseClassDto(courseClass).withStatus().withCourse(false).withSME();
     }
 
     @PostMapping(path = "courses/{code}/classes/{batch}/enroll")
@@ -120,7 +117,7 @@ public class CourseClassController {
         CourseClass courseClass = this.classService
                 .enrollStudentToSMECourseClass(enrollmentRequest.getEmail(), currentUser, code, batch);
 
-        return convertToCourseClassDTO(courseClass, true, true, true, true, false);
+        return new CourseClassDto(courseClass).withStatus().withCourse(false).withSME().withStudents();
     }
 
     @PostMapping(path = "courses/{code}/classes/{batch}/unenroll")
@@ -133,7 +130,7 @@ public class CourseClassController {
         CourseClass courseClass = this.classService
                 .unEnrollStudentFromSMECourseClass(enrollmentRequest.getEmail(), currentUser, code, batch);
 
-        return convertToCourseClassDTO(courseClass, true, true, true, true, false);
+        return new CourseClassDto(courseClass).withStatus().withCourse(false).withSME().withStudents();
     }
 
     @GetMapping(path = "courses/{code}/classes/{batch}/students")
@@ -147,51 +144,8 @@ public class CourseClassController {
 
         Page<User> students = userService.findStudentsBySMECourseClass(currentUser, code, batch, paging);
         List<UserDto> studentDtoList = students.getContent().stream()
-                .map(student -> UserController.convertToUserDTO(student, false, false)).collect(Collectors.toList());
+                .map(student -> new UserDto(student).withStatus()).collect(Collectors.toList());
         return new CustomPage<UserDto>(studentDtoList, retrievedPage, size);
-    }
-
-    public static final CourseClassDto convertToCourseClassDTO(CourseClass courseClass, boolean includeStatus,
-            boolean includeCourse, boolean includeSME, boolean includeStudents, boolean includeCourseId) {
-
-        CourseClassDto courseClassDto = new CourseClassDto();
-        courseClassDto.setBatch(courseClass.getBatchNumber());
-        courseClassDto.setQuizPercentage(courseClass.getQuizPercentage());
-        courseClassDto.setExercisePercentage(courseClass.getExercisePercentage());
-        courseClassDto.setProjectPercentage(courseClass.getProjectPercentage());
-        courseClassDto.setAttendancePercentage(courseClass.getAttendancePercentage());
-        courseClassDto.setStartDate(courseClass.getStartDate());
-        courseClassDto.setEndDate(courseClass.getEndDate());
-
-        if (includeStatus) {
-            if (courseClass.isActive()) {
-                courseClassDto.setStatus("Active");
-            } else {
-                courseClassDto.setStatus("Inactive");
-            }
-        }
-
-        if (includeCourse) {
-            courseClassDto.setCourseCode(null);
-            courseClassDto
-                    .setCourse(CourseController.convertToCourseDTO(courseClass.getCourse(), includeCourseId, true));
-        } else {
-            courseClassDto.setCourseCode(courseClass.getCourse().getCode());
-        }
-
-        if (includeSME) {
-            courseClassDto.setSme(UserController.convertToUserDTO(courseClass.getSubjectMatterExpert(),
-                    true, false));
-        }
-
-        if (includeStudents) {
-            List<UserDto> students = courseClass.getStudents().stream().map(
-                    student -> new UserDto(student.getEmail(), student.getFirstName(), student.getLastName(), null))
-                    .collect(Collectors.toList());
-            courseClassDto.setStudents(students);
-        }
-
-        return courseClassDto;
     }
 
     public static final CourseClass convertToCourseClassEntity(String sme_email, CourseClassDto courseClassDto) {

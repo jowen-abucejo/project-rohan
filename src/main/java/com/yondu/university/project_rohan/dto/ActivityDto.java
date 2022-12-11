@@ -2,7 +2,9 @@ package com.yondu.university.project_rohan.dto;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yondu.university.project_rohan.entity.Activity;
 import com.yondu.university.project_rohan.validation.CountMin;
 
 import jakarta.validation.constraints.NotBlank;
@@ -31,6 +33,9 @@ public class ActivityDto {
     @NotNull(message = "Date is required.")
     private LocalDate date;
 
+    @JsonIgnore
+    private Activity activity;
+
     /**
      * 
      */
@@ -48,6 +53,21 @@ public class ActivityDto {
         this.maxScore = maxScore;
         this.minScore = minScore;
         this.date = date;
+    }
+
+    /**
+     * @param activity
+     */
+    public ActivityDto(Activity activity) {
+        this.activity = activity;
+        this.id = activity.getId() + "";
+        this.courseCode = activity.getCourseClass().getCourse().getCode();
+        this.batch = activity.getCourseClass().getBatchNumber();
+        this.title = activity.getTitle();
+        this.maxScore = activity.getMaxScore();
+        this.minScore = activity.getMinScore();
+        this.date = activity.getSchedule();
+
     }
 
     /**

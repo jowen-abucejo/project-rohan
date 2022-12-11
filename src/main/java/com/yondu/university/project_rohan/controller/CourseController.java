@@ -44,7 +44,7 @@ public class CourseController {
 
         Page<Course> results = this.courseService.findAll(paging);
         List<CourseDto> courseRequestList = results.getContent().stream()
-                .map(course -> convertToCourseDTO(course, true, false)).collect(Collectors.toList());
+                .map(course -> new CourseDto(course).withId()).collect(Collectors.toList());
 
         return new CustomPage<CourseDto>(courseRequestList, retrievedPage, size);
     }
@@ -53,19 +53,21 @@ public class CourseController {
     @PreAuthorize("hasAnyRole('ADMIN', 'SUBJECT_MATTER_EXPERT')")
     public CourseDto saveNewCourse(@RequestBody @Valid CourseDto courseRequest) {
         Course newCourse = courseService.saveNewCourse(convertToCourseEntity(courseRequest));
-        return convertToCourseDTO(newCourse, true, false);
+        return new CourseDto(newCourse).withId();
     }
 
     @GetMapping(path = "{code}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUBJECT_MATTER_EXPERT')")
     public CourseDto getCourse(@PathVariable String code) {
-        return convertToCourseDTO(this.courseService.findByCode(code), true, true);
+        Course course = this.courseService.findByCode(code);
+        return new CourseDto(course).withId().withStatus();
     }
 
     @PostMapping(path = "{code}/deactivate")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUBJECT_MATTER_EXPERT')")
     public CourseDto deactivateCourse(@PathVariable String code) {
-        return convertToCourseDTO(this.courseService.deactivateCourse(code), true, true);
+        Course course = this.courseService.deactivateCourse(code);
+        return new CourseDto(course).withId().withStatus();
     }
 
     @GetMapping(path = "search")
@@ -77,27 +79,9 @@ public class CourseController {
 
         Page<Course> results = this.courseService.searchCourses(key, paging);
         List<CourseDto> courseRequestList = results.getContent().stream()
-                .map(course -> convertToCourseDTO(course, true, false)).collect(Collectors.toList());
+                .map(course -> new CourseDto(course).withId()).collect(Collectors.toList());
 
         return new CustomPage<CourseDto>(courseRequestList, retrievedPage, size);
-    }
-
-    public static final CourseDto convertToCourseDTO(Course course, boolean includeId, boolean includeStatus) {
-        CourseDto courseRequest = new CourseDto(course.getCode(), course.getTitle(),
-                course.getDescription());
-
-        if (includeId) {
-            courseRequest.setId(course.getId() + "");
-        }
-
-        if (includeStatus) {
-            if (course.isActive()) {
-                courseRequest.setStatus("Active");
-            } else {
-                courseRequest.setStatus("Inactive");
-            }
-        }
-        return courseRequest;
     }
 
     public static final Course convertToCourseEntity(CourseDto courseRequest) {

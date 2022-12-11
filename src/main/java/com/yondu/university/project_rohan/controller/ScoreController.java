@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.yondu.university.project_rohan.dto.ScoreDto;
 import com.yondu.university.project_rohan.entity.Score;
 import com.yondu.university.project_rohan.service.ScoreService;
@@ -34,7 +33,7 @@ public class ScoreController {
         Score score = this.scoreService.saveNewQuizScore(currentUser, id, scoreDto.getEmail(),
                 convertToScoreEntity(scoreDto));
 
-        return convertToScoreDTO(score);
+        return new ScoreDto(score);
     }
 
     @PostMapping(path = "exercises/{id}/scores")
@@ -47,7 +46,7 @@ public class ScoreController {
         Score score = this.scoreService.saveNewExerciseScore(currentUser, id, scoreDto.getEmail(),
                 convertToScoreEntity(scoreDto));
 
-        return convertToScoreDTO(score);
+        return new ScoreDto(score);
     }
 
     @PostMapping(path = "courses/{code}/classes/{batch}/project/scores")
@@ -61,7 +60,7 @@ public class ScoreController {
         Score score = this.scoreService.saveNewProjectScore(currentUser, code, batch, scoreDto.getEmail(),
                 convertToScoreEntity(scoreDto));
 
-        return convertToScoreDTO(score);
+        return new ScoreDto(score);
     }
 
     public static final Score convertToScoreEntity(ScoreDto scoreDto) {
@@ -70,11 +69,4 @@ public class ScoreController {
         return score;
     }
 
-    public static final ScoreDto convertToScoreDTO(Score score) {
-        ScoreDto scoreDto = new ScoreDto();
-        scoreDto.setScore(score.getScore());
-        scoreDto.setActivity(ActivityController.convertToActivityDTO(score.getActivity()));
-        scoreDto.setStudent(UserController.convertToUserDTO(score.getStudent(), true, false));
-        return scoreDto;
-    }
 }
