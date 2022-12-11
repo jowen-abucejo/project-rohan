@@ -63,10 +63,7 @@ public class CourseClassService {
 
     public CourseClass enrollStudentToSMECourseClass(String studentEmail, String currentUser, String code,
             int batch) {
-        Optional<User> optionalStudent = userService.findStudentByEmailAndIsActive(studentEmail);
-        if (optionalStudent.isEmpty()) {
-            throw new ResourceNotFoundException("Email don't match to any active student.");
-        }
+        User student = userService.findStudentByEmailAndIsActive(studentEmail);
 
         // find the class that is not already ended
         Optional<CourseClass> optionalCourseClass = this.classRepository
@@ -77,7 +74,7 @@ public class CourseClassService {
         }
 
         CourseClass courseClass = optionalCourseClass.get();
-        courseClass.getStudents().add(optionalStudent.get());
+        courseClass.getStudents().add(student);
 
         return this.classRepository.save(courseClass);
     }
@@ -85,11 +82,7 @@ public class CourseClassService {
     public CourseClass unEnrollStudentFromSMECourseClass(String studentEmail, String currentUser, String code,
             int batch) {
 
-        Optional<User> optionalStudent = userService.findStudentByCourseClassAndEmail(code, batch, studentEmail);
-        if (optionalStudent.isEmpty()) {
-            throw new ResourceNotFoundException(
-                    "Email don't match to any student enrolled in given class or class doesn't exist.");
-        }
+        User student = userService.findStudentByCourseClassAndEmail(code, batch, studentEmail);
 
         Optional<CourseClass> optionalCourseClass = this.classRepository
                 .findBySMEAndCourseCodeAndBatchAndNotOngoing(currentUser, code, batch);
@@ -98,7 +91,7 @@ public class CourseClassService {
         }
 
         CourseClass courseClass = optionalCourseClass.get();
-        courseClass.getStudents().remove(optionalStudent.get());
+        courseClass.getStudents().remove(student);
 
         return this.classRepository.save(courseClass);
     }

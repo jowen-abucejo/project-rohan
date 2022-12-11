@@ -72,12 +72,21 @@ public class UserService {
         return this.userRepository.save(user);
     }
 
-    public Optional<User> findStudentByEmailAndIsActive(String email) {
-        return this.userRepository.findByRoleAndEmailAndStatus(ROLE_STUDENT, email, true);
+    public User findStudentByEmailAndIsActive(String email) {
+        Optional<User> optionalStudent = this.userRepository.findByRoleAndEmailAndStatus(ROLE_STUDENT, email, true);
+        if (optionalStudent.isEmpty()) {
+            throw new ResourceNotFoundException("Email don't match to any active student.");
+        }
+
+        return optionalStudent.get();
     }
 
-    public Optional<User> findStudentByCourseClassAndEmail(String courseCode, int batch, String email) {
-        return this.userRepository.findByCourseClassAndEmail(courseCode, batch, email);
+    public User findStudentByCourseClassAndEmail(String courseCode, int batch, String email) {
+        Optional<User> optionalStudent = this.userRepository.findByCourseClassAndEmail(courseCode, batch, email);
+        if (optionalStudent.isEmpty()) {
+            throw new ResourceNotFoundException("Email doesn't match to any enrolled student.");
+        }
+        return optionalStudent.get();
     }
 
     public Page<User> findStudentsBySMECourseClass(String smeEmail, String courseCode, int batch, Pageable pageable) {

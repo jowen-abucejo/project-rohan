@@ -43,37 +43,39 @@ public class ActivityService {
     }
 
     public Activity deleteQuizByIdAndSMEEmail(int quizId, String smeEmail) {
-        Optional<Activity> optionalActivity = this.findQuizByIdAndSMEEmail(quizId, smeEmail);
-        if (optionalActivity.isEmpty()) {
-            throw new ResourceNotFoundException("Quiz not found.");
-        }
-
-        return this.deleteActivity(optionalActivity.get());
+        return this.deleteActivity(this.findQuizByIdAndSMEEmail(quizId, smeEmail));
     }
 
     public Activity deleteExerciseByIdAndSMEEmail(int exerciseId, String smeEmail) {
-        Optional<Activity> optionalActivity = this.findExerciseByIdAndSMEEmail(exerciseId, smeEmail);
-
-        return this.deleteActivity(optionalActivity.get());
+        return this.deleteActivity(this.findExerciseByIdAndSMEEmail(exerciseId, smeEmail));
     }
 
-    public Optional<Activity> findQuizByIdAndSMEEmail(int quizId, String smeEmail) {
-        return this.activityRepository.findByIdAndTypeAndSmeEmail(quizId, TYPE_QUIZ,
+    public Activity findQuizByIdAndSMEEmail(int quizId, String smeEmail) {
+        Optional<Activity> optionalActivity = this.activityRepository.findByIdAndTypeAndSmeEmail(quizId, TYPE_QUIZ,
                 smeEmail);
+        if (optionalActivity.isEmpty()) {
+            throw new ResourceNotFoundException("Quiz not found.");
+        }
+        return optionalActivity.get();
     }
 
-    public Optional<Activity> findExerciseByIdAndSMEEmail(int exerciseId, String smeEmail) {
-        return this.activityRepository.findByIdAndTypeAndSmeEmail(exerciseId, TYPE_EXERCISE,
+    public Activity findExerciseByIdAndSMEEmail(int exerciseId, String smeEmail) {
+        Optional<Activity> optionalActivity = this.activityRepository.findByIdAndTypeAndSmeEmail(exerciseId,
+                TYPE_EXERCISE,
                 smeEmail);
+        if (optionalActivity.isEmpty()) {
+            throw new ResourceNotFoundException("Exercise not found.");
+        }
+        return optionalActivity.get();
     }
 
-    public Optional<Activity> findProjectByCourseClassAndSMEEmail(String code, Integer batch, String smeEmail) {
+    public Activity findProjectByCourseClassAndSMEEmail(String code, Integer batch, String smeEmail) {
         Optional<Activity> optionalActivity = this.activityRepository.findByClassAndTypeAndSmeEmail(TYPE_PROJECT, code,
                 batch, smeEmail);
-        if (optionalActivity.isPresent()) {
-            return optionalActivity;
+        if (optionalActivity.isEmpty()) {
+            throw new ResourceNotFoundException("Project not found.");
         } else {
-            return Optional.of(this.createProject(smeEmail, code, batch));
+            return this.createProject(smeEmail, code, batch);
         }
 
     }
@@ -95,7 +97,7 @@ public class ActivityService {
         if (activity.getScores().isEmpty()) {
             this.activityRepository.delete(activity);
         } else {
-            throw new ResourceNotFoundException("Quiz cannot be deleted");
+            throw new ResourceNotFoundException("Cannot be deleted");
         }
 
         return activity;
