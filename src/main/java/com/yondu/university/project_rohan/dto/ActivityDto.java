@@ -34,6 +34,9 @@ public class ActivityDto {
     private LocalDate date;
 
     @JsonIgnore
+    private String type;
+
+    @JsonIgnore
     private Activity activity;
 
     /**
@@ -67,7 +70,7 @@ public class ActivityDto {
         this.maxScore = activity.getMaxScore();
         this.minScore = activity.getMinScore();
         this.date = activity.getSchedule();
-
+        this.type = activity.getType();
     }
 
     /**
@@ -120,6 +123,13 @@ public class ActivityDto {
     }
 
     /**
+     * @return the type
+     */
+    public String getType() {
+        return this.type;
+    }
+
+    /**
      * @param id the id to set
      */
     public void setId(String id) {
@@ -168,4 +178,10 @@ public class ActivityDto {
         this.date = date;
     }
 
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 }

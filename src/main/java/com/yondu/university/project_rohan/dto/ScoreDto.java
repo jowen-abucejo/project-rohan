@@ -1,5 +1,9 @@
 package com.yondu.university.project_rohan.dto;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -13,7 +17,7 @@ public class ScoreDto {
     @JsonInclude(Include.NON_EMPTY)
     private String id;
 
-    private ActivityDto activity;
+    private Map<String, ActivityDto> activity = new HashMap<>();
 
     @JsonInclude(Include.NON_EMPTY)
     private UserDto student;
@@ -51,7 +55,7 @@ public class ScoreDto {
     public ScoreDto(Score score) {
         this.scoreEntity = score;
         this.score = score.getScore();
-        this.activity = new ActivityDto(score.getActivity());
+        this.setActivity(new ActivityDto(score.getActivity()));
         this.student = new UserDto(score.getStudent()).withStatus();
     }
 
@@ -79,7 +83,8 @@ public class ScoreDto {
     /**
      * @return the activity
      */
-    public ActivityDto getActivity() {
+    @JsonAnyGetter
+    public Map<String, ActivityDto> getActivity() {
         return activity;
     }
 
@@ -115,7 +120,7 @@ public class ScoreDto {
      * @param activity the activity to set
      */
     public void setActivity(ActivityDto activity) {
-        this.activity = activity;
+        this.activity.put(activity.getType().toLowerCase(), activity);
     }
 
     /**

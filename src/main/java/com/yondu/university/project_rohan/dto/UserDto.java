@@ -187,6 +187,10 @@ public class UserDto {
         return this;
     }
 
+    public HashMap<String, List<ScoreDto>> getScores() {
+        return this.scores;
+    }
+
     @JsonIgnore
     public UserDto withPassword() {
         if (this.user != null) {
@@ -196,15 +200,21 @@ public class UserDto {
     }
 
     @JsonIgnore
-    public UserDto withScoresByClass(Integer classId) {
+    public UserDto withScoresByClass(String courseCode, Integer batch) {
         if (this.user != null) {
             HashMap<String, List<ScoreDto>> activityScores = new HashMap<>();
             for (Score score : this.user.getScores()) {
                 Activity activity = score.getActivity();
-                if (activity.getCourseClass().getId() == classId) {
+                if (activity.getCourseClass().getCourse().getCode().equals(courseCode)
+                        && activity.getCourseClass().getBatchNumber() == batch) {
                     ScoreDto scoreDto = new ScoreDto(score).withoutStudent();
 
                     String type = score.getActivity().getType().toLowerCase();
+                    if (type.endsWith("z"))
+                        type += "zes";
+                    else
+                        type += "s";
+
                     List<ScoreDto> scoreList = activityScores.getOrDefault(type, new ArrayList<ScoreDto>());
                     scoreList.add(scoreDto);
                     activityScores.put(type, scoreList);

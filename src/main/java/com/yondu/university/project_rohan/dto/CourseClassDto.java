@@ -316,7 +316,7 @@ public class CourseClassDto {
     }
 
     @JsonIgnore
-    public CourseClassDto withCourseCode(Boolean withCourseId) {
+    public CourseClassDto withCourseCode() {
         if (this.courseClass != null) {
             this.courseCode = this.courseClass.getCourse().getCode();
         }
@@ -332,10 +332,17 @@ public class CourseClassDto {
     }
 
     @JsonIgnore
-    public CourseClassDto withStudents() {
+    public CourseClassDto withStudents(Boolean withScores) {
         if (this.courseClass != null) {
             this.students = this.courseClass.getStudents().stream().map(
-                    student -> new UserDto(student).withoutRole())
+                    student -> {
+                        var studentDto = new UserDto(student).withoutRole();
+                        if (withScores) {
+                            studentDto.withScoresByClass(this.courseClass.getCourse().getCode(),
+                                    this.courseClass.getBatchNumber());
+                        }
+                        return studentDto;
+                    })
                     .collect(Collectors.toList());
         }
         return this;
