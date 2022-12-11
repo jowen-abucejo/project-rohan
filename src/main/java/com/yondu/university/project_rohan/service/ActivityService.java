@@ -73,11 +73,10 @@ public class ActivityService {
         Optional<Activity> optionalActivity = this.activityRepository.findByClassAndTypeAndSmeEmail(TYPE_PROJECT, code,
                 batch, smeEmail);
         if (optionalActivity.isEmpty()) {
-            throw new ResourceNotFoundException("Project not found.");
-        } else {
             return this.createProject(smeEmail, code, batch);
         }
 
+        return optionalActivity.get();
     }
 
     private Activity createProject(String smeEmail, String code, Integer batch) {
