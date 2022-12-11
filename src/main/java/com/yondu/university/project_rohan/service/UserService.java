@@ -12,28 +12,32 @@ import com.yondu.university.project_rohan.exception.ResourceNotFoundException;
 import com.yondu.university.project_rohan.repository.UserRepository;
 import com.yondu.university.project_rohan.util.PasswordGenerator;
 
-import jakarta.validation.Valid;
-
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     private final String ROLE_STUDENT = "STUDENT";
 
     /**
      * @param userRepository
      */
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
-    public User saveNewUser(@Valid User user) {
+    public User saveNewUser(User user) {
         String tempPassword = PasswordGenerator.generateRandomPassword(9);
         user.setPassword(this.passwordEncoder.encode(tempPassword));
+
+        String message = String.format("Your account password is %s", tempPassword);
+        if (!emailService.sendPassword(user.getEmail(), "Project Rohan Account Created", message)) {
+            // Log message
+        }
         return this.userRepository.save(user);
-        // return tempPassword;
     }
 
     public Page<User> findAllExceptCurrentUser(String currentUserEmail, String role, Pageable pageable) {
