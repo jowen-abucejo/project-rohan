@@ -6,6 +6,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.yondu.university.project_rohan.entity.Score;
 
@@ -15,19 +16,24 @@ import jakarta.validation.constraints.NotNull;
 
 public class ScoreDto {
     @JsonInclude(Include.NON_EMPTY)
+    @JsonProperty(index = 1)
     private String id;
 
+    // @JsonProperty(index = 2)
     private Map<String, ActivityDto> activity = new HashMap<>();
 
+    @JsonProperty(index = 3)
     @JsonInclude(Include.NON_EMPTY)
     private UserDto student;
 
     @Email
     @NotBlank(message = "Email cannot be empty.")
     @JsonInclude(Include.NON_EMPTY)
+    @JsonProperty(index = 4)
     private String email;
 
     @NotNull(message = "Score cannot be empty")
+    @JsonProperty(index = 5)
     private Integer score;
 
     @JsonIgnore

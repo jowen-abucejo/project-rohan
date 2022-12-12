@@ -12,22 +12,25 @@ import jakarta.validation.constraints.NotNull;
 
 @CountMin(start = "minScore", end = "maxScore", min = 1, message = "Invalid min and max score")
 public class ActivityDto {
+    @JsonProperty(index = 1)
     private String id;
 
-    @JsonProperty(value = "course_code")
+    @JsonProperty(value = "course_code", index = 2)
     private String courseCode;
 
+    @JsonProperty(index = 3)
     private int batch;
 
     @NotBlank(message = "Title cannot be empty.")
+    @JsonProperty(index = 4)
     private String title;
 
     @NotNull(message = "Max score is required.")
-    @JsonProperty(value = "max_score")
+    @JsonProperty(value = "max_score", index = 5)
     private Integer maxScore;
 
     @NotNull(message = "Min score is required.")
-    @JsonProperty(value = "min_score")
+    @JsonProperty(value = "min_score", index = 6)
     private Integer minScore;
 
     @NotNull(message = "Date is required.")

@@ -9,16 +9,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class GradeSheetDto {
-    @JsonProperty(value = "course_code")
+    @JsonProperty(value = "course_code", index = 1)
     private String courseCode;
 
-    @JsonProperty(value = "batch_number")
+    @JsonProperty(value = "batch_number", index = 2)
     private Integer batch;
 
     @JsonInclude(Include.NON_EMPTY)
+    @JsonProperty(index = 3)
     private List<UserDto> students;
 
     @JsonInclude(Include.NON_EMPTY)
+    @JsonProperty(index = 4)
     private Map<String, List<ScoreDto>> scores = new HashMap<>();
 
     /**

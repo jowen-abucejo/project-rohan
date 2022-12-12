@@ -23,6 +23,7 @@ import com.yondu.university.project_rohan.dto.GradeSheetDto;
 import com.yondu.university.project_rohan.dto.UserDto;
 import com.yondu.university.project_rohan.entity.CourseClass;
 import com.yondu.university.project_rohan.entity.User;
+import com.yondu.university.project_rohan.exception.ResourceNotFoundException;
 import com.yondu.university.project_rohan.service.CourseClassService;
 import com.yondu.university.project_rohan.service.CourseService;
 import com.yondu.university.project_rohan.service.UserService;
@@ -187,7 +188,10 @@ public class CourseClassController {
                         @CurrentSecurityContext(expression = "authentication.getName()") String currentUser,
                         @PathVariable String code,
                         @PathVariable int batch) {
-
+                boolean isEnrolled = this.classService.isStudentEnrolledInClass(currentUser, code, batch);
+                if (!isEnrolled) {
+                        throw new ResourceNotFoundException("Class not found.");
+                }
                 User student = userService.findByEmail(currentUser);
                 return new GradeSheetDto(new UserDto(student), code, batch);
         }

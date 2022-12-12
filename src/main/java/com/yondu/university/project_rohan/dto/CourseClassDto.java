@@ -27,57 +27,62 @@ public class CourseClassDto {
     @NotBlank(message = "Course code is required")
     @CourseCodeExists
     @JsonInclude(value = Include.NON_EMPTY)
-    @JsonProperty(value = "course_code")
+    @JsonProperty(value = "course_code", index = 1)
     private String courseCode;
 
     @JsonInclude(value = Include.NON_EMPTY)
+    @JsonProperty(index = 2)
     private CourseDto course;
 
+    @JsonProperty(index = 3)
     private Integer batch;
 
     @NotNull(message = "Quiz percentage is required")
     @DecimalMax(value = "100.00", message = "Quiz percentage maximum value is 100.00")
     @DecimalMin(value = "0.00", message = "Quiz percentage minimum value is 0.00")
     @Digits(integer = 3, fraction = 2, message = "Quiz percentage value out of bounds. <3 digits>.<2 digits>")
-    @JsonProperty(value = "quiz_percentage")
+    @JsonProperty(value = "quiz_percentage", index = 4)
     private BigDecimal quizPercentage;
 
     @NotNull(message = "Exercise percentage is required")
     @DecimalMax(value = "100.00", message = "Exercise percentage maximum value is 100.00")
     @DecimalMin(value = "0.00", message = "Exercise percentage minimum value is 0.00")
     @Digits(integer = 3, fraction = 2, message = "Exercise percentage value out of bounds. <3 digits>.<2 digits>")
-    @JsonProperty(value = "exercise_percentage")
+    @JsonProperty(value = "exercise_percentage", index = 5)
     private BigDecimal exercisePercentage;
 
     @NotNull(message = "Project percentage is required")
     @DecimalMax(value = "100.00", message = "Project percentage maximum value is 100.00")
     @DecimalMin(value = "0.00", message = "Project percentage minimum value is 0.00")
     @Digits(integer = 3, fraction = 2, message = "Project percentage value out of bounds. <3 digits>.<2 digits>")
-    @JsonProperty(value = "project_percentage")
+    @JsonProperty(value = "project_percentage", index = 6)
     private BigDecimal projectPercentage;
 
     @NotNull(message = "Attendance percentage is required")
     @DecimalMax(value = "100.00", message = "Attendance percentage maximum value is 100.00")
     @DecimalMin(value = "0.00", message = "Attendance percentage minimum value is 0.00")
     @Digits(integer = 3, fraction = 2, message = "Attendance percentage value out of bounds. <3 digits>.<2 digits>")
-    @JsonProperty(value = "attendance_percentage")
+    @JsonProperty(value = "attendance_percentage", index = 7)
     private BigDecimal attendancePercentage;
 
     @NotNull(message = "Start date is required")
-    @JsonProperty(value = "start_date")
+    @JsonProperty(value = "start_date", index = 8)
     private LocalDate startDate;
 
     @NotNull(message = "End date is required")
-    @JsonProperty(value = "end_date")
+    @JsonProperty(value = "end_date", index = 9)
     private LocalDate endDate;
 
     @JsonInclude(value = Include.NON_EMPTY)
+    @JsonProperty(index = 10)
     private String status;
 
     @JsonInclude(value = Include.NON_EMPTY)
+    @JsonProperty(index = 11)
     private UserDto sme;
 
     @JsonInclude(value = Include.NON_EMPTY)
+    @JsonProperty(index = 12)
     private List<UserDto> students;
 
     @JsonIgnore

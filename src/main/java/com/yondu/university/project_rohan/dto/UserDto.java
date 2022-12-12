@@ -25,14 +25,15 @@ public class UserDto {
     @Email(message = "Email is in invalid format")
     @Length(max = 128, message = "Email maximum length is 128 characters only.")
     @UniqueEmail
+    @JsonProperty(index = 1)
     private String email;
 
     @NotBlank(message = "First name is required.")
     @Length(max = 128, message = "First name maximum length is 128 characters only.")
-    @JsonProperty(value = "first_name")
+    @JsonProperty(value = "first_name", index = 2)
     private String firstName;
 
-    @JsonProperty(value = "last_name")
+    @JsonProperty(value = "last_name", index = 3)
     @NotBlank(message = "Last name is required.")
     @Length(max = 128, message = "Last name maximum length is 128 characters only.")
     private String lastName;
@@ -40,12 +41,15 @@ public class UserDto {
     @NotBlank(message = "Role is required.")
     @Pattern(regexp = "^(STUDENT|student|SUBJECT MATTER EXPERT|subject matter expert)$", message = "Role can either be 'STUDENT' or 'SUBJECT MATTER EXPERT' only (case-insensitive).")
     @JsonInclude(Include.NON_EMPTY)
+    @JsonProperty(index = 4)
     private String role;
 
     @JsonInclude(Include.NON_EMPTY)
+    @JsonProperty(index = 5)
     private String password;
 
     @JsonInclude(Include.NON_EMPTY)
+    @JsonProperty(index = 6)
     private String status;
 
     @JsonInclude(Include.NON_EMPTY)

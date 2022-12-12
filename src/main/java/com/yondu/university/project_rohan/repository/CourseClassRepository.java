@@ -46,4 +46,9 @@ public interface CourseClassRepository extends JpaRepository<CourseClass, Intege
         @Query(value = "SELECT c.* FROM class c INNER JOIN student_class sc ON c.id=sc.class_id INNER JOIN user u "
                         + "ON sc.user_id=u.id WHERE u.email=:email", nativeQuery = true)
         Page<CourseClass> findAllByStudentEmail(String email, Pageable paging);
+
+        @Query(value = "SELECT CASE WHEN EXISTS(SELECT 1 FROM user u INNER JOIN student_class sc ON u.id=sc.user_id INNER JOIN class c ON c.id=sc.class_id "
+                        + "WHERE c.course_code=:code AND c.batch_number=:batch AND u.email=:email) "
+                        + "THEN 'true' ELSE 'FALSE' END", nativeQuery = true)
+        boolean isStudentEnrolledInClass(String email, String code, Integer batch);
 }

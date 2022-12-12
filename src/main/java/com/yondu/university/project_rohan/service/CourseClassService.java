@@ -99,4 +99,8 @@ public class CourseClassService {
     public Page<CourseClass> findAllByStudentEmail(String email, Pageable paging) {
         return this.classRepository.findAllByStudentEmail(email, paging);
     }
+
+    public Boolean isStudentEnrolledInClass(String studentEmail, String courseCode, Integer batch) {
+        return this.classRepository.isStudentEnrolledInClass(studentEmail, courseCode, batch);
+    }
 }

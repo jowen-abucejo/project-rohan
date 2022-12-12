@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.yondu.university.project_rohan.entity.Course;
 import com.yondu.university.project_rohan.validation.UniqueCourseCode;
@@ -12,21 +13,26 @@ import jakarta.validation.constraints.NotBlank;
 
 public class CourseDto {
     @JsonInclude(Include.NON_EMPTY)
+    @JsonProperty(index = 1)
     private String id;
 
     @NotBlank(message = "Course code is required.")
     @Length(max = 32, message = "Course code maximum length is 32 characters only.")
     @UniqueCourseCode
+    @JsonProperty(index = 2)
     private String code;
 
     @NotBlank(message = "Course title is required.")
     @Length(max = 128, message = "Course title maximum length is 128 characters ony.")
+    @JsonProperty(index = 3)
     private String title;
 
     @NotBlank(message = "Course description is required.")
+    @JsonProperty(index = 4)
     private String description;
 
     @JsonInclude(Include.NON_EMPTY)
+    @JsonProperty(index = 5)
     private String status;
 
     @JsonIgnore
