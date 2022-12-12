@@ -2,14 +2,45 @@ package com.yondu.university.project_rohan.dto;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yondu.university.project_rohan.entity.Activity;
+import com.yondu.university.project_rohan.validation.CountMin;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+@CountMin(start = "minScore", end = "maxScore", min = 1, message = "Invalid min and max score")
 public class ActivityDto {
+    @JsonProperty(index = 1)
     private String id;
+
+    @JsonProperty(value = "course_code", index = 2)
     private String courseCode;
+
+    @JsonProperty(index = 3)
     private int batch;
+
+    @NotBlank(message = "Title cannot be empty.")
+    @JsonProperty(index = 4)
     private String title;
-    private int maxScore;
-    private int minScore;
+
+    @NotNull(message = "Max score is required.")
+    @JsonProperty(value = "max_score", index = 5)
+    private Integer maxScore;
+
+    @NotNull(message = "Min score is required.")
+    @JsonProperty(value = "min_score", index = 6)
+    private Integer minScore;
+
+    @NotNull(message = "Date is required.")
     private LocalDate date;
+
+    @JsonIgnore
+    private String type;
+
+    @JsonIgnore
+    private Activity activity;
 
     /**
      * 
@@ -18,20 +49,31 @@ public class ActivityDto {
     }
 
     /**
-     * @param courseCode
-     * @param batch
      * @param title
      * @param maxScore
      * @param minScore
      * @param date
      */
-    public ActivityDto(String courseCode, int batch, String title, int maxScore, int minScore, LocalDate date) {
-        this.courseCode = courseCode;
-        this.batch = batch;
+    public ActivityDto(String title, Integer maxScore, Integer minScore, LocalDate date) {
         this.title = title;
         this.maxScore = maxScore;
         this.minScore = minScore;
         this.date = date;
+    }
+
+    /**
+     * @param activity
+     */
+    public ActivityDto(Activity activity) {
+        this.activity = activity;
+        this.id = activity.getId() + "";
+        this.courseCode = activity.getCourseClass().getCourse().getCode();
+        this.batch = activity.getCourseClass().getBatchNumber();
+        this.title = activity.getTitle();
+        this.maxScore = activity.getMaxScore();
+        this.minScore = activity.getMinScore();
+        this.date = activity.getSchedule();
+        this.type = activity.getType();
     }
 
     /**
@@ -51,7 +93,7 @@ public class ActivityDto {
     /**
      * @return the batch
      */
-    public int getBatch() {
+    public Integer getBatch() {
         return batch;
     }
 
@@ -65,14 +107,14 @@ public class ActivityDto {
     /**
      * @return the maxScore
      */
-    public int getMaxScore() {
+    public Integer getMaxScore() {
         return maxScore;
     }
 
     /**
      * @return the minScore
      */
-    public int getMinScore() {
+    public Integer getMinScore() {
         return minScore;
     }
 
@@ -81,6 +123,13 @@ public class ActivityDto {
      */
     public LocalDate getDate() {
         return date;
+    }
+
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return this.type;
     }
 
     /**
@@ -132,4 +181,10 @@ public class ActivityDto {
         this.date = date;
     }
 
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 }

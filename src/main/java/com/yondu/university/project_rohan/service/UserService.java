@@ -8,31 +8,36 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.yondu.university.project_rohan.entity.User;
+import com.yondu.university.project_rohan.exception.ResourceNotFoundException;
 import com.yondu.university.project_rohan.repository.UserRepository;
 import com.yondu.university.project_rohan.util.PasswordGenerator;
-
-import jakarta.validation.Valid;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     private final String ROLE_STUDENT = "STUDENT";
 
     /**
      * @param userRepository
      */
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
-    public User saveNewUser(@Valid User user) {
+    public User saveNewUser(User user) {
         String tempPassword = PasswordGenerator.generateRandomPassword(9);
         user.setPassword(this.passwordEncoder.encode(tempPassword));
+
+        String message = String.format("Your account password is %s", tempPassword);
+        if (!emailService.sendPassword(user.getEmail(), "Project Rohan Account Created", message)) {
+            // Log message
+        }
         return this.userRepository.save(user);
-        // return tempPassword;
     }
 
     public Page<User> findAllExceptCurrentUser(String currentUserEmail, String role, Pageable pageable) {
@@ -49,28 +54,43 @@ public class UserService {
         return this.userRepository.findByEmailOrFirstNameOrLastName(searchKey, currentUser, pageable);
     }
 
-    public Optional<User> findByEmail(String email) {
-        return this.userRepository.findByEmail(email);
-    }
-
-    public Optional<User> deactivateUser(String email) {
+    public User findByEmail(String email) {
         Optional<User> optionalUser = this.userRepository.findByEmail(email);
         if (optionalUser.isEmpty()) {
-            return optionalUser;
+            throw new ResourceNotFoundException("User not found.");
+        }
+
+        return optionalUser.get();
+
+    }
+
+    public User deactivateUser(String email) {
+        Optional<User> optionalUser = this.userRepository.findByEmail(email);
+        if (optionalUser.isEmpty()) {
+            throw new ResourceNotFoundException("User not found.");
         }
 
         User user = optionalUser.get();
         user.setActive(false);
 
-        return Optional.of(this.userRepository.save(user));
+        return this.userRepository.save(user);
     }
 
-    public Optional<User> findStudentByEmailAndIsActive(String email) {
-        return this.userRepository.findByRoleAndEmailAndStatus(ROLE_STUDENT, email, true);
+    public User findStudentByEmailAndIsActive(String email) {
+        Optional<User> optionalStudent = this.userRepository.findByRoleAndEmailAndStatus(ROLE_STUDENT, email, true);
+        if (optionalStudent.isEmpty()) {
+            throw new ResourceNotFoundException("Email don't match to any active student.");
+        }
+
+        return optionalStudent.get();
     }
 
-    public Optional<User> findStudentByCourseClassAndEmail(String courseCode, int batch, String email) {
-        return this.userRepository.findByCourseClassAndEmail(courseCode, batch, email);
+    public User findStudentByCourseClassAndEmail(String courseCode, int batch, String email) {
+        Optional<User> optionalStudent = this.userRepository.findByCourseClassAndEmail(courseCode, batch, email);
+        if (optionalStudent.isEmpty()) {
+            throw new ResourceNotFoundException("Email doesn't match to any enrolled student.");
+        }
+        return optionalStudent.get();
     }
 
     public Page<User> findStudentsBySMECourseClass(String smeEmail, String courseCode, int batch, Pageable pageable) {

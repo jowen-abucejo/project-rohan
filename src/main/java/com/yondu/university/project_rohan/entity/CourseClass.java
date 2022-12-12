@@ -5,12 +5,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -24,6 +27,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Table(name = "class")
@@ -86,6 +90,11 @@ public class CourseClass {
     @JoinTable(name = "student_class", joinColumns = @JoinColumn(name = "class_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> students = new HashSet<>();
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "class_id")
+    @JsonManagedReference("activity")
+    private List<Activity> activities;
+
     /**
      * 
      */
@@ -114,7 +123,8 @@ public class CourseClass {
     public CourseClass(Integer id, Course course, Integer batchNumber, BigDecimal quizPercentage,
             BigDecimal exercisePercentage, BigDecimal projectPercentage, BigDecimal attendancePercentage,
             LocalDate startDate, LocalDate endDate, boolean isActive, User subjectMatterExpert, String createdBy,
-            LocalDateTime createdAt, String updatedBy, LocalDateTime updatedAt, Set<User> students) {
+            LocalDateTime createdAt, String updatedBy, LocalDateTime updatedAt, Set<User> students,
+            List<Activity> activities) {
         this.id = id;
         this.course = course;
         this.batchNumber = batchNumber;
@@ -131,6 +141,7 @@ public class CourseClass {
         this.updatedBy = updatedBy;
         this.updatedAt = updatedAt;
         this.students = students;
+        this.activities = activities;
     }
 
     /**
@@ -320,6 +331,13 @@ public class CourseClass {
      */
     public void setStudents(Set<User> students) {
         this.students = students;
+    }
+
+    /**
+     * @return the activity
+     */
+    public List<Activity> getActivities() {
+        return activities;
     }
 
 }

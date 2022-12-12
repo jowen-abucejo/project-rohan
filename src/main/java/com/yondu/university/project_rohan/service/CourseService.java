@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.yondu.university.project_rohan.entity.Course;
+import com.yondu.university.project_rohan.exception.ResourceNotFoundException;
 import com.yondu.university.project_rohan.repository.CourseRepository;
 
 @Service
@@ -36,20 +37,24 @@ public class CourseService {
         return this.courseRepository.findByCodeOrTitleOrDescription(searchKey, pageable);
     }
 
-    public Optional<Course> findByCode(String code) {
-        return this.courseRepository.findByCode(code);
-    }
-
-    public Optional<Course> deactivateCourse(String code) {
+    public Course findByCode(String code) {
         Optional<Course> optionalCourse = this.courseRepository.findByCode(code);
         if (optionalCourse.isEmpty()) {
-            return optionalCourse;
+            throw new ResourceNotFoundException("Course not found.");
+        }
+        return optionalCourse.get();
+    }
+
+    public Course deactivateCourse(String code) {
+        Optional<Course> optionalCourse = this.courseRepository.findByCode(code);
+        if (optionalCourse.isEmpty()) {
+            throw new ResourceNotFoundException("Course not found.");
         }
 
         Course course = optionalCourse.get();
         course.setActive(false);
 
-        return Optional.of(this.courseRepository.save(course));
+        return this.courseRepository.save(course);
     }
 
 }

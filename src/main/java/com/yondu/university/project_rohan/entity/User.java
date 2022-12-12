@@ -2,13 +2,17 @@ package com.yondu.university.project_rohan.entity;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -21,6 +25,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -64,6 +69,10 @@ public class User {
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "student")
+    private List<Score> scores = new ArrayList<>();
+
     /**
      * 
      */
@@ -83,10 +92,11 @@ public class User {
      * @param updatedBy
      * @param updatedAt
      * @param roles
+     * @param scores
      */
     public User(Integer id, String email, String password, String firstName, String lastName, boolean isActive,
             String createdBy, LocalDateTime createdAt, String updatedBy, LocalDateTime updatedAt,
-            HashSet<Role> roles) {
+            HashSet<Role> roles, List<Score> scores) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -98,6 +108,7 @@ public class User {
         this.updatedBy = updatedBy;
         this.updatedAt = updatedAt;
         this.roles = roles;
+        this.scores = scores;
     }
 
     /**
@@ -178,6 +189,13 @@ public class User {
     }
 
     /**
+     * @return the scores
+     */
+    public List<Score> getScores() {
+        return this.scores;
+    }
+
+    /**
      * @param email the email to set
      */
     public void setEmail(String email) {
@@ -217,6 +235,13 @@ public class User {
      */
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    /**
+     * @param scores the scores to set
+     */
+    public void setScores(List<Score> scores) {
+        this.scores = scores;
     }
 
 }
