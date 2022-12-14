@@ -14,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.yondu.university.project_rohan.exception.ParameterException;
 import com.yondu.university.project_rohan.exception.ResourceNotFoundException;
 
 @RestControllerAdvice
@@ -30,6 +31,13 @@ public class ControllerExceptionHandler {
         List<String> errors = new ArrayList<>();
         errors.add(ex.getMessage());
         return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ParameterException.class)
+    public ResponseEntity<Map<String, List<String>>> handleParameterException(ParameterException ex) {
+        List<String> errors = new ArrayList<>();
+        errors.add(ex.getMessage());
+        return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     private Map<String, List<String>> getErrorsMap(List<String> errors) {

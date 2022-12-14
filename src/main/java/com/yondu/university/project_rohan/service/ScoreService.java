@@ -7,6 +7,7 @@ import com.yondu.university.project_rohan.entity.Course;
 import com.yondu.university.project_rohan.entity.CourseClass;
 import com.yondu.university.project_rohan.entity.Score;
 import com.yondu.university.project_rohan.entity.User;
+import com.yondu.university.project_rohan.exception.ParameterException;
 import com.yondu.university.project_rohan.exception.ResourceNotFoundException;
 import com.yondu.university.project_rohan.repository.ScoreRepository;
 
@@ -28,49 +29,35 @@ public class ScoreService {
     }
 
     public Score saveNewQuizScore(String smeEmail, int quizId, String studentEmail, Score score) {
-        Activity activity = this.activityService.findQuizByIdAndSMEEmail(quizId, smeEmail);
-        CourseClass courseClass = activity.getCourseClass();
+        Activity quiz = this.activityService.findQuizByIdAndSMEEmail(quizId, smeEmail);
+        CourseClass courseClass = quiz.getCourseClass();
         Course course = courseClass.getCourse();
 
         User student = this.userService.findStudentByCourseClassAndEmail(course.getCode(),
                 courseClass.getBatchNumber(), studentEmail);
 
-        boolean quizIsGraded = this.scoreRepository.isExistsByActivityAndStudent(activity.getId(), studentEmail);
+        boolean quizIsGraded = this.scoreRepository.isExistsByActivityAndStudent(quiz.getId(), studentEmail);
         if (quizIsGraded) {
             throw new ResourceNotFoundException("Not graded quiz with the given id not found.");
         }
 
-        int adjustedScore = Math.max(score.getScore(), activity.getMinScore());
-        adjustedScore = Math.min(adjustedScore, activity.getMaxScore());
-
-        score.setScore(adjustedScore);
-        score.setActivity(activity);
-        score.setStudent(student);
-
-        return this.scoreRepository.save(score);
+        return this.saveScore(score, quiz, student);
     }
 
     public Score saveNewExerciseScore(String smeEmail, int exerciseId, String studentEmail, Score score) {
-        Activity activity = this.activityService.findExerciseByIdAndSMEEmail(exerciseId, smeEmail);
-        CourseClass courseClass = activity.getCourseClass();
+        Activity exercise = this.activityService.findExerciseByIdAndSMEEmail(exerciseId, smeEmail);
+        CourseClass courseClass = exercise.getCourseClass();
         Course course = courseClass.getCourse();
 
         User student = this.userService.findStudentByCourseClassAndEmail(course.getCode(),
                 courseClass.getBatchNumber(), studentEmail);
 
-        boolean exerciseIsGraded = this.scoreRepository.isExistsByActivityAndStudent(activity.getId(), studentEmail);
+        boolean exerciseIsGraded = this.scoreRepository.isExistsByActivityAndStudent(exercise.getId(), studentEmail);
         if (exerciseIsGraded) {
             throw new ResourceNotFoundException("Not graded exercise with the given id not found.");
         }
 
-        int adjustedScore = Math.max(score.getScore(), activity.getMinScore());
-        adjustedScore = Math.min(adjustedScore, activity.getMaxScore());
-
-        score.setScore(adjustedScore);
-        score.setActivity(activity);
-        score.setStudent(student);
-
-        return this.scoreRepository.save(score);
+        return this.saveScore(score, exercise, student);
     }
 
     public Score saveNewProjectScore(String smeEmail, String courseCode, Integer batch, String studentEmail,
@@ -90,11 +77,22 @@ public class ScoreService {
             throw new ResourceNotFoundException("Not graded class project not found.");
         }
 
-        int adjustedScore = Math.max(score.getScore(), project.getMinScore());
-        adjustedScore = Math.min(adjustedScore, project.getMaxScore());
+        return this.saveScore(score, project, student);
 
-        score.setScore(adjustedScore);
-        score.setActivity(project);
+    }
+
+    private boolean isScoreValid(Activity activity, Integer score) {
+        return score >= activity.getMaxScore() && score <= activity.getMaxScore();
+    }
+
+    private Score saveScore(Score score, Activity activity, User student) {
+        if (!this.isScoreValid(activity, score.getScore())) {
+            throw new ParameterException(
+                    String.format("Score can not be less than %d and greater than %d.", activity.getMinScore(),
+                            activity.getMaxScore()));
+        }
+
+        score.setActivity(activity);
         score.setStudent(student);
 
         return this.scoreRepository.save(score);

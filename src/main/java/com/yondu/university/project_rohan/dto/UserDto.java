@@ -24,6 +24,7 @@ public class UserDto {
     @NotBlank(message = "Email is required.")
     @Email(message = "Email is in invalid format")
     @Length(max = 128, message = "Email maximum length is 128 characters only.")
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@yondu.com$", message = "Invalid yondu email provided.")
     @UniqueEmail
     @JsonProperty(index = 1)
     private String email;

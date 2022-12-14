@@ -5,13 +5,13 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CustomPage<T> {
-    @JsonProperty(index = 3)
+    @JsonProperty(index = 1)
     private List<T> data;
 
-    @JsonProperty(index = 1)
+    @JsonProperty(index = 2)
     private Integer page;
 
-    @JsonProperty(index = 2)
+    @JsonProperty(index = 3)
     private Integer size;
 
     /**
