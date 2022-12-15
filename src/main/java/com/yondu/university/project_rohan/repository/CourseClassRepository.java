@@ -51,4 +51,7 @@ public interface CourseClassRepository extends JpaRepository<CourseClass, Intege
                         + "WHERE c.course_code=:code AND c.batch_number=:batch AND u.email=:email) "
                         + "THEN 'true' ELSE 'FALSE' END", nativeQuery = true)
         boolean isStudentEnrolledInClass(String email, String code, Integer batch);
+
+        @Query(value = "SELECT * FROM class WHERE course_code=:code AND batch_number=:batch AND CURDATE() > start_date LIMIT 1", nativeQuery = true)
+        Optional<CourseClass> findByCourseAndBatchAndClose(String code, int batch);
 }
