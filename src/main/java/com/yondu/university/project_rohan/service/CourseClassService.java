@@ -103,4 +103,13 @@ public class CourseClassService {
     public Boolean isStudentEnrolledInClass(String studentEmail, String courseCode, Integer batch) {
         return this.classRepository.isStudentEnrolledInClass(studentEmail, courseCode, batch);
     }
+
+    public CourseClass findByCourseAndBatchAndClosed(String courseCode, int batch) {
+        Optional<CourseClass> optionalCourseClass = this.classRepository.findByCourseAndBatchAndClose(
+                courseCode, batch);
+        if (optionalCourseClass.isEmpty()) {
+            throw new ResourceNotFoundException("Class not found or not yet finished.");
+        }
+        return optionalCourseClass.get();
+    }
 }
